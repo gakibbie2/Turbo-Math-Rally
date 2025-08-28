@@ -1,4 +1,5 @@
 using TurboMathRally.Utils;
+using TurboMathRally.Math;
 
 namespace TurboMathRally.Core
 {
@@ -9,6 +10,9 @@ namespace TurboMathRally.Core
     {
         private GameState _currentState;
         private readonly MenuSystem _menuSystem;
+        private readonly AnswerValidator _answerValidator;
+        private readonly ProblemGenerator _problemGenerator;
+        private readonly GameConfiguration _gameConfig;
         private bool _isRunning;
         
         /// <summary>
@@ -17,7 +21,10 @@ namespace TurboMathRally.Core
         public Game()
         {
             _currentState = GameState.Menu;
+            _gameConfig = new GameConfiguration();
             _menuSystem = new MenuSystem();
+            _answerValidator = new AnswerValidator();
+            _problemGenerator = new ProblemGenerator();
             _isRunning = true;
         }
         
@@ -36,8 +43,8 @@ namespace TurboMathRally.Core
                     {
                         GameState.Menu => _menuSystem.DisplayMainMenu(),
                         GameState.ModeSelection => _menuSystem.DisplayModeSelection(),
-                        GameState.MathSelection => _menuSystem.DisplayMathSelection(),
-                        GameState.SeriesSelection => _menuSystem.DisplaySeriesSelection(),
+                        GameState.MathSelection => _menuSystem.DisplayMathSelection(_gameConfig),
+                        GameState.SeriesSelection => _menuSystem.DisplaySeriesSelection(_gameConfig),
                         GameState.Playing => HandlePlaying(),
                         GameState.CarRepair => HandleCarRepair(),
                         GameState.StageComplete => HandleStageComplete(),
@@ -72,17 +79,111 @@ namespace TurboMathRally.Core
         }
         
         /// <summary>
-        /// Handle the playing state (placeholder for now)
+        /// Handle the playing state - actual racing gameplay
         /// </summary>
         private GameState HandlePlaying()
         {
             ConsoleHelper.DisplayHeader("RALLY STAGE IN PROGRESS");
             
-            Console.WriteLine("🏁 Racing mechanics will be implemented in the next work item!");
+            Console.WriteLine("🏁 Time to race! Solve math problems to speed through the stage!");
+            Console.WriteLine("🚗 Answer correctly to keep your speed up!");
+            Console.WriteLine("❌ Wrong answers will slow you down!");
             Console.WriteLine();
-            Console.WriteLine("For now, let's simulate a successful stage completion...");
             
+            // Reset validator stats for this race
+            _answerValidator.ResetStats();
+            
+            // Generate problems for this stage (5 problems per stage)
+            const int questionsPerStage = 5;
+            int mistakes = 0;
+            const int maxMistakes = 3;
+            
+            for (int i = 1; i <= questionsPerStage; i++)
+            {
+                Console.WriteLine($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+                Console.WriteLine($"🏎️  Question {i}/{questionsPerStage}");
+                Console.WriteLine($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+                Console.WriteLine();
+                
+                // Generate a problem (handle mixed mode)
+                MathProblem problem;
+                if (_gameConfig.IsMixedMode)
+                {
+                    // For mixed mode, randomly select an operation
+                    Random random = new Random();
+                    MathOperation[] operations = { MathOperation.Addition, MathOperation.Subtraction, MathOperation.Multiplication, MathOperation.Division };
+                    MathOperation randomOperation = operations[random.Next(operations.Length)];
+                    problem = _problemGenerator.GenerateProblem(randomOperation, _gameConfig.SelectedDifficulty);
+                }
+                else
+                {
+                    problem = _problemGenerator.GenerateProblem(_gameConfig.SelectedMathType, _gameConfig.SelectedDifficulty);
+                }
+                
+                // Display the problem
+                Console.WriteLine($"🧮 Solve this problem:");
+                Console.WriteLine();
+                ConsoleHelper.WriteColored($"     {problem.Question}", ConsoleColor.Yellow);
+                Console.WriteLine();
+                Console.WriteLine();
+                
+                // Get user input
+                string userInput = ConsoleHelper.GetUserInput("Your answer");
+                
+                // Validate the answer
+                ValidationResult result = _answerValidator.ValidateAnswer(problem, userInput);
+                
+                // Display feedback
+                Console.WriteLine();
+                if (result.IsCorrect)
+                {
+                    ConsoleHelper.DisplaySuccess(result.Message);
+                    Console.WriteLine("🚀 Your car speeds ahead!");
+                }
+                else
+                {
+                    ConsoleHelper.DisplayError(result.Message);
+                    Console.WriteLine($"💡 The correct answer was: {result.CorrectAnswer}");
+                    mistakes++;
+                    
+                    if (!result.IsValid)
+                    {
+                        Console.WriteLine("🐌 Invalid input slowed you down!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("🐌 Your car loses speed!");
+                    }
+                    
+                    // Check if too many mistakes (car breakdown)
+                    if (mistakes >= maxMistakes)
+                    {
+                        Console.WriteLine();
+                        ConsoleHelper.DisplayError($"💥 Oh no! Your car broke down after {maxMistakes} mistakes!");
+                        Console.WriteLine("🔧 Time for emergency repairs!");
+                        ConsoleHelper.WaitForKeyPress();
+                        return GameState.CarRepair;
+                    }
+                }
+                
+                // Show progress
+                Console.WriteLine();
+                Console.WriteLine($"🎯 Current accuracy: {result.AccuracyPercentage:F1}%");
+                Console.WriteLine($"❌ Mistakes: {mistakes}/{maxMistakes}");
+                
+                if (i < questionsPerStage)
+                {
+                    ConsoleHelper.WaitForKeyPress("Press Enter for the next problem...");
+                    Console.WriteLine();
+                }
+            }
+            
+            // Stage completed successfully!
+            Console.WriteLine();
+            Console.WriteLine("🏁 Stage completed!");
+            _answerValidator.DisplayStats();
             ConsoleHelper.WaitForKeyPress();
+            
             return GameState.StageComplete;
         }
         

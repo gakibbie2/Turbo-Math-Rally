@@ -1,4 +1,5 @@
 using TurboMathRally.Utils;
+using TurboMathRally.Math;
 
 namespace TurboMathRally.Core
 {
@@ -62,6 +63,14 @@ namespace TurboMathRally.Core
         /// </summary>
         public GameState DisplayMathSelection()
         {
+            return DisplayMathSelection(null);
+        }
+        
+        /// <summary>
+        /// Display math type selection and update game configuration
+        /// </summary>
+        public GameState DisplayMathSelection(GameConfiguration? gameConfig)
+        {
             ConsoleHelper.DisplayHeader("CHOOSE YOUR MATH CHALLENGE");
             
             ConsoleHelper.DisplayMenuOption(1, "➕ Addition Only");
@@ -73,6 +82,39 @@ namespace TurboMathRally.Core
             
             Console.WriteLine();
             string input = ConsoleHelper.GetUserInput("Select math type (1-6)");
+            
+            // Update game configuration if provided
+            if (gameConfig != null)
+            {
+                switch (input)
+                {
+                    case "1":
+                        gameConfig.SelectedMathType = MathOperation.Addition;
+                        gameConfig.SelectedMathTypeName = "Addition Only";
+                        gameConfig.IsMixedMode = false;
+                        break;
+                    case "2":
+                        gameConfig.SelectedMathType = MathOperation.Subtraction;
+                        gameConfig.SelectedMathTypeName = "Subtraction Only";
+                        gameConfig.IsMixedMode = false;
+                        break;
+                    case "3":
+                        gameConfig.SelectedMathType = MathOperation.Multiplication;
+                        gameConfig.SelectedMathTypeName = "Multiplication Only";
+                        gameConfig.IsMixedMode = false;
+                        break;
+                    case "4":
+                        gameConfig.SelectedMathType = MathOperation.Division;
+                        gameConfig.SelectedMathTypeName = "Division Only";
+                        gameConfig.IsMixedMode = false;
+                        break;
+                    case "5":
+                        gameConfig.SelectedMathType = MathOperation.Addition; // Default for mixed mode
+                        gameConfig.SelectedMathTypeName = "Mixed Problems";
+                        gameConfig.IsMixedMode = true;
+                        break;
+                }
+            }
             
             return input switch
             {
@@ -87,6 +129,14 @@ namespace TurboMathRally.Core
         /// </summary>
         public GameState DisplaySeriesSelection()
         {
+            return DisplaySeriesSelection(null);
+        }
+        
+        /// <summary>
+        /// Display rally series selection and update game configuration
+        /// </summary>
+        public GameState DisplaySeriesSelection(GameConfiguration? gameConfig)
+        {
             ConsoleHelper.DisplayHeader("SELECT RALLY SERIES");
             
             ConsoleHelper.DisplayMenuOption(1, "🌲 Rookie Rally (Ages 5-7) - Forest, Park, Beach");
@@ -96,6 +146,26 @@ namespace TurboMathRally.Core
             
             Console.WriteLine();
             string input = ConsoleHelper.GetUserInput("Select series (1-4)");
+            
+            // Update game configuration if provided
+            if (gameConfig != null)
+            {
+                switch (input)
+                {
+                    case "1":
+                        gameConfig.SelectedDifficulty = DifficultyLevel.Rookie;
+                        gameConfig.SelectedSeriesName = "Rookie Rally";
+                        break;
+                    case "2":
+                        gameConfig.SelectedDifficulty = DifficultyLevel.Junior;
+                        gameConfig.SelectedSeriesName = "Junior Championship";
+                        break;
+                    case "3":
+                        gameConfig.SelectedDifficulty = DifficultyLevel.Pro;
+                        gameConfig.SelectedSeriesName = "Pro Circuit";
+                        break;
+                }
+            }
             
             return input switch
             {
