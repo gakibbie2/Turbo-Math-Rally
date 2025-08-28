@@ -16,6 +16,7 @@ namespace TurboMathRally.Core
         private readonly CarBreakdownSystem _carBreakdownSystem;
         private readonly StoryProblemGenerator _storyProblemGenerator;
         private bool _isRunning;
+        private bool _isContinuingRace = false;  // Track if we're continuing after repair
         
         /// <summary>
         /// Initialize a new game instance
@@ -94,9 +95,21 @@ namespace TurboMathRally.Core
             Console.WriteLine("❌ Wrong answers will slow you down!");
             Console.WriteLine();
             
-            // Reset validator stats and car condition for this race
-            _answerValidator.ResetStats();
-            _carBreakdownSystem.Reset();
+            // Reset validator stats and car condition for this race (only if starting fresh)
+            if (!_isContinuingRace)
+            {
+                _answerValidator.ResetStats();
+                _carBreakdownSystem.Reset();
+                Console.WriteLine("🎯 Starting fresh race statistics...");
+                Console.WriteLine();
+            }
+            else
+            {
+                Console.WriteLine("🔧 Continuing race after successful repair!");
+                Console.WriteLine("📊 Your previous statistics are maintained.");
+                Console.WriteLine();
+                _isContinuingRace = false; // Reset the flag
+            }
             
             // Generate problems for this stage (varies by difficulty)
             int questionsPerStage = _gameConfig.SelectedDifficulty switch
@@ -266,8 +279,9 @@ namespace TurboMathRally.Core
                 Console.WriteLine();
                 Console.WriteLine(_carBreakdownSystem.GetEncouragingMessage());
                 
-                // Reset car condition
+                // Reset car condition and set continuation flag
                 _carBreakdownSystem.Reset();
+                _isContinuingRace = true;  // Flag that we're continuing the race
                 
                 ConsoleHelper.WaitForKeyPress("Press Enter to continue racing...");
                 return GameState.Playing;
