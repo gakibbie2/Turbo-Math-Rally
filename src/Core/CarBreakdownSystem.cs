@@ -80,6 +80,29 @@ namespace TurboMathRally.Core
         }
         
         /// <summary>
+        /// Get compact car status for header display
+        /// </summary>
+        public string GetCompactCarStatus()
+        {
+            string carIcon = _strikeCount switch
+            {
+                0 => "🚗💨",
+                1 => "🚗⚠️",
+                2 => "🚗💨❌",
+                >= 3 => "🚗💥",
+                _ => "🚗"
+            };
+            
+            string strikes = "";
+            for (int i = 0; i < MaxStrikes; i++)
+            {
+                strikes += i < _strikeCount ? "❌" : "⭕";
+            }
+            
+            return $"{carIcon} {strikes}";
+        }
+        
+        /// <summary>
         /// Display the current car status
         /// </summary>
         public void DisplayCarStatus()

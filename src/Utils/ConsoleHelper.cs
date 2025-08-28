@@ -102,9 +102,25 @@ namespace TurboMathRally.Utils
         }
         
         /// <summary>
-        /// Display a rally-themed progress bar
+        /// Display a rally-themed progress bar with live stats
         /// </summary>
         public static void DisplayRaceProgressBar(int currentQuestion, int totalQuestions, string stageName = "Rally Stage")
+        {
+            DisplayRaceProgressBar(currentQuestion, totalQuestions, stageName, 0, 0, 0, "");
+        }
+        
+        /// <summary>
+        /// Display a rally-themed progress bar with live stats
+        /// </summary>
+        public static void DisplayRaceProgressBar(int currentQuestion, int totalQuestions, string stageName, double accuracy, int currentStreak, int bestStreak)
+        {
+            DisplayRaceProgressBar(currentQuestion, totalQuestions, stageName, accuracy, currentStreak, bestStreak, "");
+        }
+        
+        /// <summary>
+        /// Display a rally-themed progress bar with live stats, car status, and last answer result
+        /// </summary>
+        public static void DisplayRaceProgressBar(int currentQuestion, int totalQuestions, string stageName, double accuracy, int currentStreak, int bestStreak, string carStatus, string lastAnswerResult = "")
         {
             double progressPercent = (double)currentQuestion / totalQuestions;
             int barWidth = 40; // Width of the progress bar
@@ -136,6 +152,41 @@ namespace TurboMathRally.Utils
             // Display the visual progress bar
             WriteColored(progressBar, ConsoleColor.Green);
             Console.WriteLine();
+            
+            // Display live stats if provided
+            if (accuracy > 0 || currentStreak > 0 || bestStreak > 0 || !string.IsNullOrEmpty(carStatus))
+            {
+                WriteColored($"🎯 Accuracy: ", ConsoleColor.White);
+                ConsoleColor accuracyColor = accuracy >= 80 ? ConsoleColor.Green : 
+                                           accuracy >= 60 ? ConsoleColor.Yellow : ConsoleColor.Red;
+                WriteColored($"{accuracy:F1}%", accuracyColor);
+                
+                WriteColored($" | 🔥 Streak: ", ConsoleColor.White);
+                WriteColored($"{currentStreak}", ConsoleColor.Cyan);
+                
+                WriteColored($" | 🏆 Best: ", ConsoleColor.White);
+                WriteColored($"{bestStreak}", ConsoleColor.Yellow);
+                
+                // Display last answer result if available
+                if (!string.IsNullOrEmpty(lastAnswerResult))
+                {
+                    WriteColored($" | Last: ", ConsoleColor.White);
+                    if (lastAnswerResult.Contains("✅"))
+                        WriteColored(lastAnswerResult, ConsoleColor.Green);
+                    else if (lastAnswerResult.Contains("❌"))
+                        WriteColored(lastAnswerResult, ConsoleColor.Red);
+                    else
+                        WriteColored(lastAnswerResult, ConsoleColor.White);
+                }
+                
+                if (!string.IsNullOrEmpty(carStatus))
+                {
+                    WriteColored($" | ", ConsoleColor.White);
+                    WriteColored(carStatus, ConsoleColor.Green);
+                }
+                
+                Console.WriteLine();
+            }
             
             // Add milestone indicators
             if (progressPercent >= 0.25 && progressPercent < 0.5)

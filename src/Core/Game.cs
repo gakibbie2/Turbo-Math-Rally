@@ -20,6 +20,7 @@ namespace TurboMathRally.Core
         private int _currentQuestionNumber = 1;  // Track current question in race
         private int _totalQuestionsThisRace = 0; // Track total questions including story problems
         private DateTime _raceStartTime;         // Track race start time for performance metrics
+        private string _lastAnswerResult = "";   // Track last answer result for display
         
         /// <summary>
         /// Initialize a new game instance
@@ -106,6 +107,7 @@ namespace TurboMathRally.Core
                 _currentQuestionNumber = 1;
                 _totalQuestionsThisRace = 0;
                 _raceStartTime = DateTime.Now; // Start timing the race
+                _lastAnswerResult = ""; // Reset last answer result
                 Console.WriteLine("🎯 Starting fresh race statistics...");
                 Console.WriteLine();
             }
@@ -129,13 +131,18 @@ namespace TurboMathRally.Core
             
             for (int i = _currentQuestionNumber; i <= questionsPerStage; i++)
             {
+                // Clear screen for clean presentation
+                ConsoleHelper.ClearScreen();
+                
                 Console.WriteLine($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-                Console.WriteLine($" {_gameConfig.SelectedSeriesName} - {_gameConfig.SelectedMathTypeName}");
+                Console.WriteLine($"🏁 {_gameConfig.SelectedSeriesName} - {_gameConfig.SelectedMathTypeName}");
                 Console.WriteLine($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
                 Console.WriteLine();
                 
-                // Display enhanced progress bar
-                ConsoleHelper.DisplayRaceProgressBar(i, questionsPerStage, $"{_gameConfig.SelectedSeriesName} Rally");
+                // Display enhanced progress bar with live stats, car status, and last answer result
+                ConsoleHelper.DisplayRaceProgressBar(i, questionsPerStage, $"{_gameConfig.SelectedSeriesName} Rally", 
+                    _answerValidator.AccuracyPercentage, _answerValidator.CurrentStreak, _answerValidator.BestStreak,
+                    _carBreakdownSystem.GetCompactCarStatus(), _lastAnswerResult);
                 Console.WriteLine();
                 
                 // Generate a problem (handle mixed mode)
@@ -165,6 +172,9 @@ namespace TurboMathRally.Core
                 
                 // Validate the answer
                 ValidationResult result = _answerValidator.ValidateAnswer(problem, userInput);
+                
+                // Update last answer result for display in next question
+                _lastAnswerResult = result.IsCorrect ? "✅ Correct" : "❌ Wrong";
                 
                 // Display feedback
                 Console.WriteLine();
@@ -216,22 +226,14 @@ namespace TurboMathRally.Core
                     }
                 }
                 
-                // Show progress and car status
-                Console.WriteLine();
-                Console.WriteLine($"🎯 Current accuracy: {result.AccuracyPercentage:F1}%");
-                _carBreakdownSystem.DisplayCarStatus();
-                Console.WriteLine();
-                
-                if (i < questionsPerStage)
-                {
-                    ConsoleHelper.WaitForKeyPress("Press Enter for the next problem...");
-                    Console.WriteLine();
-                }
+                // No wait time - immediate transition to next question
             }
             
             // Stage completed successfully!
             Console.WriteLine();
-            ConsoleHelper.DisplayRaceProgressBar(questionsPerStage, questionsPerStage, $"{_gameConfig.SelectedSeriesName} Rally");
+            ConsoleHelper.DisplayRaceProgressBar(questionsPerStage, questionsPerStage, $"{_gameConfig.SelectedSeriesName} Rally",
+                _answerValidator.AccuracyPercentage, _answerValidator.CurrentStreak, _answerValidator.BestStreak,
+                _carBreakdownSystem.GetCompactCarStatus(), _lastAnswerResult);
             Console.WriteLine();
             ConsoleHelper.DisplaySuccess("🏆 STAGE COMPLETED! 🏆");
             Console.WriteLine();
