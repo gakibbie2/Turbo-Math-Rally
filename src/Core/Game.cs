@@ -13,6 +13,7 @@ namespace TurboMathRally.Core
         private readonly AnswerValidator _answerValidator;
         private readonly ProblemGenerator _problemGenerator;
         private readonly GameConfiguration _gameConfig;
+        private readonly CarBreakdownSystem _carBreakdownSystem;
         private bool _isRunning;
         
         /// <summary>
@@ -25,6 +26,7 @@ namespace TurboMathRally.Core
             _menuSystem = new MenuSystem();
             _answerValidator = new AnswerValidator();
             _problemGenerator = new ProblemGenerator();
+            _carBreakdownSystem = new CarBreakdownSystem();
             _isRunning = true;
         }
         
@@ -90,8 +92,9 @@ namespace TurboMathRally.Core
             Console.WriteLine("❌ Wrong answers will slow you down!");
             Console.WriteLine();
             
-            // Reset validator stats for this race
+            // Reset validator stats and car condition for this race
             _answerValidator.ResetStats();
+            _carBreakdownSystem.Reset();
             
             // Generate problems for this stage (varies by difficulty)
             int questionsPerStage = _gameConfig.SelectedDifficulty switch
@@ -101,9 +104,6 @@ namespace TurboMathRally.Core
                 DifficultyLevel.Pro => 50,       // Ages 9-12: Long stages
                 _ => 25
             };
-            
-            int mistakes = 0;
-            const int maxMistakes = 3;
             
             for (int i = 1; i <= questionsPerStage; i++)
             {
@@ -152,32 +152,45 @@ namespace TurboMathRally.Core
                 {
                     ConsoleHelper.DisplayError(result.Message);
                     Console.WriteLine($"💡 The correct answer was: {result.CorrectAnswer}");
-                    mistakes++;
+                    
+                    // Add strike to car breakdown system
+                    StrikeResult strikeResult = _carBreakdownSystem.AddStrike();
                     
                     if (!result.IsValid)
                     {
-                        Console.WriteLine("🐌 Invalid input slowed you down!");
+                        Console.WriteLine("🐌 Invalid input caused mechanical problems!");
                     }
                     else
                     {
-                        Console.WriteLine("🐌 Your car loses speed!");
+                        Console.WriteLine("🐌 Wrong answer damaged your car!");
                     }
                     
-                    // Check if too many mistakes (car breakdown)
-                    if (mistakes >= maxMistakes)
+                    Console.WriteLine();
+                    
+                    // Show strike warning
+                    switch (strikeResult.WarningLevel)
                     {
-                        Console.WriteLine();
-                        ConsoleHelper.DisplayError($"💥 Oh no! Your car broke down after {maxMistakes} mistakes!");
-                        Console.WriteLine("🔧 Time for emergency repairs!");
-                        ConsoleHelper.WaitForKeyPress();
-                        return GameState.CarRepair;
+                        case WarningLevel.Light:
+                            ConsoleHelper.DisplayWarning(strikeResult.Message);
+                            Console.WriteLine(strikeResult.Description);
+                            break;
+                        case WarningLevel.Moderate:
+                            ConsoleHelper.DisplayError(strikeResult.Message);
+                            Console.WriteLine(strikeResult.Description);
+                            break;
+                        case WarningLevel.Breakdown:
+                            Console.WriteLine();
+                            ConsoleHelper.DisplayError(strikeResult.Message);
+                            Console.WriteLine(strikeResult.Description);
+                            ConsoleHelper.WaitForKeyPress();
+                            return GameState.CarRepair;
                     }
                 }
                 
-                // Show progress
+                // Show progress and car status
                 Console.WriteLine();
                 Console.WriteLine($"🎯 Current accuracy: {result.AccuracyPercentage:F1}%");
-                Console.WriteLine($"❌ Mistakes: {mistakes}/{maxMistakes}");
+                _carBreakdownSystem.DisplayCarStatus();
                 
                 // Show milestone encouragement
                 double progress = (double)i / questionsPerStage;
@@ -205,18 +218,106 @@ namespace TurboMathRally.Core
         }
         
         /// <summary>
-        /// Handle car repair state (placeholder for now)
+        /// Handle car repair state - solve a story problem to fix the car
         /// </summary>
         private GameState HandleCarRepair()
         {
-            ConsoleHelper.DisplayHeader("CAR REPAIR NEEDED");
+            ConsoleHelper.DisplayHeader("🔧 EMERGENCY CAR REPAIR");
             
-            Console.WriteLine("🔧 Your car broke down! Time for a repair story problem.");
+            Console.WriteLine("� Your rally car has broken down on the side of the track!");
+            Console.WriteLine("🚗 A friendly mechanic offers to help, but you need to solve their repair problem!");
             Console.WriteLine();
-            Console.WriteLine("Car repair mechanics will be implemented soon...");
             
-            ConsoleHelper.WaitForKeyPress();
-            return GameState.Playing;
+            // Display car breakdown status
+            _carBreakdownSystem.DisplayCarStatus();
+            Console.WriteLine();
+            
+            // Generate a story problem for repair
+            Console.WriteLine("🔧 REPAIR STORY PROBLEM:");
+            Console.WriteLine();
+            
+            // Create a car-themed story problem
+            string[] repairStories = {
+                "You need {0} new spark plugs for your car. Each spark plug costs ${1}. How much will all the spark plugs cost?",
+                "Your car needs {0} liters of oil. You have {1} liters already. How many more liters do you need to buy?",
+                "The mechanic has {0} wrenches and lends you {1} more. How many wrenches do you have in total?",
+                "Your car tire needs {0} screws. You've already tightened {1} screws. How many screws are left to tighten?",
+                "The repair will take {0} minutes. You've already waited {1} minutes. How many more minutes until it's fixed?"
+            };
+            
+            Random random = new Random();
+            string storyTemplate = repairStories[random.Next(repairStories.Length)];
+            
+            // Generate numbers based on difficulty
+            int num1 = _gameConfig.SelectedDifficulty switch
+            {
+                DifficultyLevel.Rookie => random.Next(2, 10),
+                DifficultyLevel.Junior => random.Next(5, 25),
+                DifficultyLevel.Pro => random.Next(10, 50),
+                _ => random.Next(2, 10)
+            };
+            
+            int num2 = _gameConfig.SelectedDifficulty switch
+            {
+                DifficultyLevel.Rookie => random.Next(1, 8),
+                DifficultyLevel.Junior => random.Next(3, 15),
+                DifficultyLevel.Pro => random.Next(5, 30),
+                _ => random.Next(1, 8)
+            };
+            
+            // Create the story and determine operation/answer
+            string storyProblem = string.Format(storyTemplate, num1, num2);
+            int correctAnswer;
+            
+            // Determine the answer based on the story type
+            if (storyTemplate.Contains("How much will all") || storyTemplate.Contains("in total"))
+                correctAnswer = num1 * num2;
+            else if (storyTemplate.Contains("How many more") || storyTemplate.Contains("left to"))
+                correctAnswer = num1 - num2;
+            else
+                correctAnswer = num1 + num2;
+            
+            Console.WriteLine($"📖 {storyProblem}");
+            Console.WriteLine();
+            
+            // Get user input for repair
+            string userInput = ConsoleHelper.GetUserInput("Your answer");
+            
+            // Validate repair answer
+            bool isCorrect = false;
+            if (int.TryParse(userInput.Trim(), out int userAnswer))
+            {
+                isCorrect = userAnswer == correctAnswer;
+            }
+            
+            Console.WriteLine();
+            
+            if (isCorrect)
+            {
+                ConsoleHelper.DisplaySuccess("🎉 Perfect! The mechanic fixes your car!");
+                Console.WriteLine("🔧 Your car is running like new again!");
+                Console.WriteLine("🚗💨 Time to get back on the rally track!");
+                Console.WriteLine();
+                Console.WriteLine(_carBreakdownSystem.GetEncouragingMessage());
+                
+                // Reset car condition
+                _carBreakdownSystem.Reset();
+                
+                ConsoleHelper.WaitForKeyPress("Press Enter to continue racing...");
+                return GameState.Playing;
+            }
+            else
+            {
+                ConsoleHelper.DisplayError("❌ That's not quite right...");
+                Console.WriteLine($"💡 The correct answer was: {correctAnswer}");
+                Console.WriteLine();
+                Console.WriteLine("🚨 The mechanic shakes their head sadly...");
+                Console.WriteLine("💔 Your car couldn't be repaired this time.");
+                Console.WriteLine("🏁 Your rally ends here, but every great driver faces setbacks!");
+                
+                ConsoleHelper.WaitForKeyPress();
+                return GameState.GameOver;
+            }
         }
         
         /// <summary>
