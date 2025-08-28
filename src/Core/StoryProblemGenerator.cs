@@ -21,24 +21,43 @@ namespace TurboMathRally.Core
         /// Generate a car-themed story problem for repairs
         /// </summary>
         /// <param name="difficulty">Difficulty level to match</param>
+        /// <param name="mathOperation">Math operation type to use for the story problem</param>
+        /// <param name="isMixedMode">Whether mixed operations are allowed</param>
         /// <returns>A story problem with context and answer</returns>
-        public StoryProblem GenerateRepairStoryProblem(DifficultyLevel difficulty)
+        public StoryProblem GenerateRepairStoryProblem(DifficultyLevel difficulty, MathOperation mathOperation, bool isMixedMode = false)
         {
-            // Get problem templates for different operations
-            var additionTemplates = GetAdditionTemplates();
-            var subtractionTemplates = GetSubtractionTemplates();
-            var multiplicationTemplates = GetMultiplicationTemplates();
-            var divisionTemplates = GetDivisionTemplates();
+            // Get appropriate templates based on selected operation or mixed mode
+            StoryTemplate[] availableTemplates;
             
-            // Combine all templates
-            var allTemplates = additionTemplates
-                .Concat(subtractionTemplates)
-                .Concat(multiplicationTemplates)
-                .Concat(divisionTemplates)
-                .ToArray();
+            if (isMixedMode)
+            {
+                // Mixed mode: use all operation types
+                var additionTemplates = GetAdditionTemplates();
+                var subtractionTemplates = GetSubtractionTemplates();
+                var multiplicationTemplates = GetMultiplicationTemplates();
+                var divisionTemplates = GetDivisionTemplates();
+                
+                availableTemplates = additionTemplates
+                    .Concat(subtractionTemplates)
+                    .Concat(multiplicationTemplates)
+                    .Concat(divisionTemplates)
+                    .ToArray();
+            }
+            else
+            {
+                // Single operation mode: use only the selected operation
+                availableTemplates = mathOperation switch
+                {
+                    MathOperation.Addition => GetAdditionTemplates().ToArray(),
+                    MathOperation.Subtraction => GetSubtractionTemplates().ToArray(),
+                    MathOperation.Multiplication => GetMultiplicationTemplates().ToArray(),
+                    MathOperation.Division => GetDivisionTemplates().ToArray(),
+                    _ => GetAdditionTemplates().ToArray() // Default to addition
+                };
+            }
             
-            // Select random template
-            var template = allTemplates[_random.Next(allTemplates.Length)];
+            // Select random template from available ones
+            var template = availableTemplates[_random.Next(availableTemplates.Length)];
             
             // Generate numbers based on difficulty
             var (num1, num2) = GenerateNumbersForDifficulty(difficulty, template.Operation);

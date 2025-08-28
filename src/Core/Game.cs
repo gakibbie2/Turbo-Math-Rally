@@ -17,6 +17,8 @@ namespace TurboMathRally.Core
         private readonly StoryProblemGenerator _storyProblemGenerator;
         private bool _isRunning;
         private bool _isContinuingRace = false;  // Track if we're continuing after repair
+        private int _currentQuestionNumber = 1;  // Track current question in race
+        private int _totalQuestionsThisRace = 0; // Track total questions including story problems
         
         /// <summary>
         /// Initialize a new game instance
@@ -100,13 +102,16 @@ namespace TurboMathRally.Core
             {
                 _answerValidator.ResetStats();
                 _carBreakdownSystem.Reset();
+                _currentQuestionNumber = 1;
+                _totalQuestionsThisRace = 0;
                 Console.WriteLine("🎯 Starting fresh race statistics...");
                 Console.WriteLine();
             }
             else
             {
                 Console.WriteLine("🔧 Continuing race after successful repair!");
-                Console.WriteLine("📊 Your previous statistics are maintained.");
+                Console.WriteLine($"📊 Resuming from question {_currentQuestionNumber}");
+                Console.WriteLine("📈 Your previous statistics are maintained.");
                 Console.WriteLine();
                 _isContinuingRace = false; // Reset the flag
             }
@@ -120,7 +125,7 @@ namespace TurboMathRally.Core
                 _ => 25
             };
             
-            for (int i = 1; i <= questionsPerStage; i++)
+            for (int i = _currentQuestionNumber; i <= questionsPerStage; i++)
             {
                 Console.WriteLine($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
                 Console.WriteLine($"🏎️  Question {i}/{questionsPerStage} | Stage Progress: {(double)i / questionsPerStage * 100:F0}%");
@@ -197,6 +202,10 @@ namespace TurboMathRally.Core
                             Console.WriteLine();
                             ConsoleHelper.DisplayError(strikeResult.Message);
                             Console.WriteLine(strikeResult.Description);
+                            
+                            // Save current position before going to repair
+                            _currentQuestionNumber = i + 1; // Continue from next question after repair
+                            
                             ConsoleHelper.WaitForKeyPress();
                             return GameState.CarRepair;
                     }
@@ -252,7 +261,10 @@ namespace TurboMathRally.Core
             Console.WriteLine();
             
             // Use the story problem generator
-            StoryProblem storyProblem = _storyProblemGenerator.GenerateRepairStoryProblem(_gameConfig.SelectedDifficulty);
+            StoryProblem storyProblem = _storyProblemGenerator.GenerateRepairStoryProblem(
+                _gameConfig.SelectedDifficulty, 
+                _gameConfig.SelectedMathType, 
+                _gameConfig.IsMixedMode);
             
             Console.WriteLine($"📖 {storyProblem.StoryText}");
             Console.WriteLine();
@@ -268,6 +280,9 @@ namespace TurboMathRally.Core
             {
                 isCorrect = userAnswer == storyProblem.Answer;
             }
+            
+            // Count this story problem in our total questions
+            _totalQuestionsThisRace++;
             
             Console.WriteLine();
             
