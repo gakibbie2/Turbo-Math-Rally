@@ -100,5 +100,87 @@ namespace TurboMathRally.Utils
         {
             WriteLineColored($"⚠️  {message}", ConsoleColor.Yellow);
         }
+        
+        /// <summary>
+        /// Display a rally-themed progress bar
+        /// </summary>
+        public static void DisplayRaceProgressBar(int currentQuestion, int totalQuestions, string stageName = "Rally Stage")
+        {
+            double progressPercent = (double)currentQuestion / totalQuestions;
+            int barWidth = 40; // Width of the progress bar
+            int filledWidth = (int)(progressPercent * barWidth);
+            
+            // Ensure we don't exceed the bar width and handle edge cases
+            filledWidth = System.Math.Min(filledWidth, barWidth);
+            int emptyWidth = System.Math.Max(0, barWidth - filledWidth - 1); // Reserve 1 space for car emoji
+            
+            // Create the progress bar visual
+            string progressBar;
+            if (progressPercent >= 1.0)
+            {
+                // At 100%, show car at the finish line
+                progressBar = "🏁" + new string('━', barWidth - 1) + "🚗🏆";
+            }
+            else
+            {
+                // Normal progress with car in the middle
+                progressBar = "🏁" + new string('━', filledWidth) + "🚗" + new string('░', emptyWidth) + "🏆";
+            }
+            
+            // Display the progress information
+            WriteColored($"📊 {stageName} Progress: ", ConsoleColor.Cyan);
+            WriteColored($"{currentQuestion}/{totalQuestions}", ConsoleColor.White);
+            WriteColored($" ({progressPercent * 100:F0}%)", ConsoleColor.Yellow);
+            Console.WriteLine();
+            
+            // Display the visual progress bar
+            WriteColored(progressBar, ConsoleColor.Green);
+            Console.WriteLine();
+            
+            // Add milestone indicators
+            if (progressPercent >= 0.25 && progressPercent < 0.5)
+                WriteLineColored("🚩 Quarter checkpoint passed!", ConsoleColor.Yellow);
+            else if (progressPercent >= 0.5 && progressPercent < 0.75)
+                WriteLineColored("🚩 Halfway checkpoint - Great pace!", ConsoleColor.Yellow);
+            else if (progressPercent >= 0.75 && progressPercent < 1.0)
+                WriteLineColored("🚩 Final quarter - Push to the finish!", ConsoleColor.Yellow);
+            else if (progressPercent >= 1.0)
+                WriteLineColored("🏆 FINISH LINE REACHED! 🏆", ConsoleColor.Green);
+        }
+        
+        /// <summary>
+        /// Display race statistics summary
+        /// </summary>
+        public static void DisplayRaceStats(int questionsAnswered, double accuracy, int totalTime = 0)
+        {
+            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            WriteLineColored("🏁 RACE STATISTICS", ConsoleColor.Cyan);
+            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            
+            WriteColored("📊 Questions Completed: ", ConsoleColor.White);
+            WriteLineColored(questionsAnswered.ToString(), ConsoleColor.Yellow);
+            
+            WriteColored("🎯 Accuracy Rate: ", ConsoleColor.White);
+            ConsoleColor accuracyColor = accuracy >= 80 ? ConsoleColor.Green : 
+                                       accuracy >= 60 ? ConsoleColor.Yellow : ConsoleColor.Red;
+            WriteLineColored($"{accuracy:F1}%", accuracyColor);
+            
+            if (totalTime > 0)
+            {
+                WriteColored("⏱️ Total Time: ", ConsoleColor.White);
+                WriteLineColored($"{totalTime} seconds", ConsoleColor.Yellow);
+            }
+            
+            // Performance rating
+            string rating = accuracy >= 90 ? "🏆 CHAMPION RACER!" :
+                           accuracy >= 80 ? "🥇 EXPERT DRIVER!" :
+                           accuracy >= 70 ? "🥈 SKILLED RACER!" :
+                           accuracy >= 60 ? "🥉 IMPROVING DRIVER!" :
+                           "🚗 ROOKIE RACER - Keep practicing!";
+            
+            Console.WriteLine();
+            WriteLineColored(rating, ConsoleColor.Green);
+            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        }
     }
 }

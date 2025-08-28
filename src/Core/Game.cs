@@ -19,6 +19,7 @@ namespace TurboMathRally.Core
         private bool _isContinuingRace = false;  // Track if we're continuing after repair
         private int _currentQuestionNumber = 1;  // Track current question in race
         private int _totalQuestionsThisRace = 0; // Track total questions including story problems
+        private DateTime _raceStartTime;         // Track race start time for performance metrics
         
         /// <summary>
         /// Initialize a new game instance
@@ -104,6 +105,7 @@ namespace TurboMathRally.Core
                 _carBreakdownSystem.Reset();
                 _currentQuestionNumber = 1;
                 _totalQuestionsThisRace = 0;
+                _raceStartTime = DateTime.Now; // Start timing the race
                 Console.WriteLine("🎯 Starting fresh race statistics...");
                 Console.WriteLine();
             }
@@ -128,9 +130,12 @@ namespace TurboMathRally.Core
             for (int i = _currentQuestionNumber; i <= questionsPerStage; i++)
             {
                 Console.WriteLine($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-                Console.WriteLine($"🏎️  Question {i}/{questionsPerStage} | Stage Progress: {(double)i / questionsPerStage * 100:F0}%");
-                Console.WriteLine($"🏁 {_gameConfig.SelectedSeriesName} - {_gameConfig.SelectedMathTypeName}");
+                Console.WriteLine($" {_gameConfig.SelectedSeriesName} - {_gameConfig.SelectedMathTypeName}");
                 Console.WriteLine($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+                Console.WriteLine();
+                
+                // Display enhanced progress bar
+                ConsoleHelper.DisplayRaceProgressBar(i, questionsPerStage, $"{_gameConfig.SelectedSeriesName} Rally");
                 Console.WriteLine();
                 
                 // Generate a problem (handle mixed mode)
@@ -215,15 +220,7 @@ namespace TurboMathRally.Core
                 Console.WriteLine();
                 Console.WriteLine($"🎯 Current accuracy: {result.AccuracyPercentage:F1}%");
                 _carBreakdownSystem.DisplayCarStatus();
-                
-                // Show milestone encouragement
-                double progress = (double)i / questionsPerStage;
-                if (i == (int)(questionsPerStage * 0.25))
-                    Console.WriteLine("🚗 25% complete - You're cruising!");
-                else if (i == (int)(questionsPerStage * 0.50))
-                    Console.WriteLine("🏁 Halfway there - Keep up the great pace!");
-                else if (i == (int)(questionsPerStage * 0.75))
-                    Console.WriteLine("🚀 75% complete - Final stretch ahead!");
+                Console.WriteLine();
                 
                 if (i < questionsPerStage)
                 {
@@ -234,8 +231,35 @@ namespace TurboMathRally.Core
             
             // Stage completed successfully!
             Console.WriteLine();
-            Console.WriteLine("🏁 Stage completed!");
-            _answerValidator.DisplayStats();
+            ConsoleHelper.DisplayRaceProgressBar(questionsPerStage, questionsPerStage, $"{_gameConfig.SelectedSeriesName} Rally");
+            Console.WriteLine();
+            ConsoleHelper.DisplaySuccess("🏆 STAGE COMPLETED! 🏆");
+            Console.WriteLine();
+            
+            // Calculate race time and display comprehensive stats
+            DateTime raceEndTime = DateTime.Now;
+            int totalRaceTimeSeconds = (int)(raceEndTime - _raceStartTime).TotalSeconds;
+            
+            // Display enhanced statistics using our new method
+            ConsoleHelper.DisplayRaceStats(
+                _answerValidator.TotalQuestions, 
+                _answerValidator.AccuracyPercentage, 
+                totalRaceTimeSeconds
+            );
+            
+            // Additional detailed stats
+            Console.WriteLine();
+            Console.WriteLine("🔥 ADDITIONAL RACE DETAILS:");
+            Console.WriteLine($"   🎯 Best Streak: {_answerValidator.BestStreak} correct in a row");
+            Console.WriteLine($"   🏁 Questions per minute: {(_answerValidator.TotalQuestions / System.Math.Max(1, totalRaceTimeSeconds / 60.0)):F1}");
+            Console.WriteLine($"   ⏱️ Average time per question: {(totalRaceTimeSeconds / System.Math.Max(1, _answerValidator.TotalQuestions)):F1} seconds");
+            
+            if (_totalQuestionsThisRace > questionsPerStage)
+            {
+                Console.WriteLine($"   🔧 Repair problems solved: {_totalQuestionsThisRace - questionsPerStage}");
+                Console.WriteLine("   💪 Great recovery from breakdowns!");
+            }
+            
             ConsoleHelper.WaitForKeyPress();
             
             return GameState.StageComplete;

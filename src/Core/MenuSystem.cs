@@ -73,11 +73,29 @@ namespace TurboMathRally.Core
         {
             ConsoleHelper.DisplayHeader("CHOOSE YOUR MATH CHALLENGE");
             
-            ConsoleHelper.DisplayMenuOption(1, "➕ Addition Only");
-            ConsoleHelper.DisplayMenuOption(2, "➖ Subtraction Only");
-            ConsoleHelper.DisplayMenuOption(3, "✖️  Multiplication Only");
-            ConsoleHelper.DisplayMenuOption(4, "➗ Division Only");
-            ConsoleHelper.DisplayMenuOption(5, "🎲 Mixed Problems (All operations)");
+            Console.WriteLine("🎯 Select the type of math problems you want to practice:");
+            Console.WriteLine();
+            
+            ConsoleHelper.DisplayMenuOption(1, "➕ Addition Only - Perfect for beginners (3 + 5 = ?)");
+            Console.WriteLine("    👶 Best for ages 5-7 | 🎯 Focus: Number sense & counting");
+            Console.WriteLine();
+            
+            ConsoleHelper.DisplayMenuOption(2, "➖ Subtraction Only - Building on addition skills (8 - 3 = ?)");
+            Console.WriteLine("    🧒 Best for ages 6-8 | 🎯 Focus: Reverse thinking & logic");
+            Console.WriteLine();
+            
+            ConsoleHelper.DisplayMenuOption(3, "✖️  Multiplication Only - Times tables mastery (4 × 6 = ?)");
+            Console.WriteLine("    👦 Best for ages 7-10 | 🎯 Focus: Pattern recognition & memory");
+            Console.WriteLine();
+            
+            ConsoleHelper.DisplayMenuOption(4, "➗ Division Only - Advanced problem solving (24 ÷ 6 = ?)");
+            Console.WriteLine("    👧 Best for ages 8-12 | 🎯 Focus: Logical reasoning & facts");
+            Console.WriteLine();
+            
+            ConsoleHelper.DisplayMenuOption(5, "🎲 Mixed Problems - All operations for variety");
+            Console.WriteLine("    🏆 Best for ages 9+ | 🎯 Focus: Comprehensive math skills");
+            Console.WriteLine();
+            
             ConsoleHelper.DisplayMenuOption(6, "🔙 Back");
             
             Console.WriteLine();
@@ -139,12 +157,33 @@ namespace TurboMathRally.Core
         {
             ConsoleHelper.DisplayHeader("SELECT RALLY SERIES");
             
-            ConsoleHelper.DisplayMenuOption(1, "🌲 Rookie Rally (Ages 5-7) - Forest, Park, Beach");
-            ConsoleHelper.DisplayMenuOption(2, "🏔️  Junior Championship (Ages 7-9) - Mountain, Desert, City, Snow");
-            ConsoleHelper.DisplayMenuOption(3, "🏆 Pro Circuit (Ages 9-12) - Extreme challenges!");
+            Console.WriteLine("🏁 Choose your difficulty level - each series has different challenges:");
+            Console.WriteLine();
+            
+            ConsoleHelper.DisplayMenuOption(1, "🌲 Rookie Rally (Ages 5-7)");
+            Console.WriteLine("    📊 25 questions | 🔢 Small numbers (1-10) | ⏱️ No time pressure");
+            Console.WriteLine("    🌳 Tracks: Forest Trail, Sunny Park, Sandy Beach");
+            Console.WriteLine("    💡 Perfect for: First-time racers, building confidence");
+            Console.WriteLine();
+            
+            ConsoleHelper.DisplayMenuOption(2, "🏔️  Junior Championship (Ages 7-9)");
+            Console.WriteLine("    📊 35 questions | 🔢 Medium numbers (1-50) | ⏱️ Moderate pace");
+            Console.WriteLine("    🏔️ Tracks: Mountain Pass, Desert Dunes, City Streets, Snow Rally");
+            Console.WriteLine("    💡 Perfect for: Developing skills, consistent practice");
+            Console.WriteLine();
+            
+            ConsoleHelper.DisplayMenuOption(3, "🏆 Pro Circuit (Ages 9-12)");
+            Console.WriteLine("    📊 50 questions | 🔢 Challenging numbers (1-100) | ⏱️ Racing pace");
+            Console.WriteLine("    🏆 Tracks: Extreme terrain, advanced rally courses");
+            Console.WriteLine("    💡 Perfect for: Math champions, advanced learners");
+            Console.WriteLine();
+            
             ConsoleHelper.DisplayMenuOption(4, "🔙 Back");
             
             Console.WriteLine();
+            Console.WriteLine("💡 Pro tip: Start with Rookie Rally if you're new to math racing!");
+            Console.WriteLine();
+            
             string input = ConsoleHelper.GetUserInput("Select series (1-4)");
             
             // Update game configuration if provided
