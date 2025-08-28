@@ -14,6 +14,7 @@ namespace TurboMathRally.Core
         private readonly ProblemGenerator _problemGenerator;
         private readonly GameConfiguration _gameConfig;
         private readonly CarBreakdownSystem _carBreakdownSystem;
+        private readonly StoryProblemGenerator _storyProblemGenerator;
         private bool _isRunning;
         
         /// <summary>
@@ -27,6 +28,7 @@ namespace TurboMathRally.Core
             _answerValidator = new AnswerValidator();
             _problemGenerator = new ProblemGenerator();
             _carBreakdownSystem = new CarBreakdownSystem();
+            _storyProblemGenerator = new StoryProblemGenerator();
             _isRunning = true;
         }
         
@@ -236,48 +238,12 @@ namespace TurboMathRally.Core
             Console.WriteLine("🔧 REPAIR STORY PROBLEM:");
             Console.WriteLine();
             
-            // Create a car-themed story problem
-            string[] repairStories = {
-                "You need {0} new spark plugs for your car. Each spark plug costs ${1}. How much will all the spark plugs cost?",
-                "Your car needs {0} liters of oil. You have {1} liters already. How many more liters do you need to buy?",
-                "The mechanic has {0} wrenches and lends you {1} more. How many wrenches do you have in total?",
-                "Your car tire needs {0} screws. You've already tightened {1} screws. How many screws are left to tighten?",
-                "The repair will take {0} minutes. You've already waited {1} minutes. How many more minutes until it's fixed?"
-            };
+            // Use the story problem generator
+            StoryProblem storyProblem = _storyProblemGenerator.GenerateRepairStoryProblem(_gameConfig.SelectedDifficulty);
             
-            Random random = new Random();
-            string storyTemplate = repairStories[random.Next(repairStories.Length)];
-            
-            // Generate numbers based on difficulty
-            int num1 = _gameConfig.SelectedDifficulty switch
-            {
-                DifficultyLevel.Rookie => random.Next(2, 10),
-                DifficultyLevel.Junior => random.Next(5, 25),
-                DifficultyLevel.Pro => random.Next(10, 50),
-                _ => random.Next(2, 10)
-            };
-            
-            int num2 = _gameConfig.SelectedDifficulty switch
-            {
-                DifficultyLevel.Rookie => random.Next(1, 8),
-                DifficultyLevel.Junior => random.Next(3, 15),
-                DifficultyLevel.Pro => random.Next(5, 30),
-                _ => random.Next(1, 8)
-            };
-            
-            // Create the story and determine operation/answer
-            string storyProblem = string.Format(storyTemplate, num1, num2);
-            int correctAnswer;
-            
-            // Determine the answer based on the story type
-            if (storyTemplate.Contains("How much will all") || storyTemplate.Contains("in total"))
-                correctAnswer = num1 * num2;
-            else if (storyTemplate.Contains("How many more") || storyTemplate.Contains("left to"))
-                correctAnswer = num1 - num2;
-            else
-                correctAnswer = num1 + num2;
-            
-            Console.WriteLine($"📖 {storyProblem}");
+            Console.WriteLine($"📖 {storyProblem.StoryText}");
+            Console.WriteLine();
+            Console.WriteLine($"� Context: {storyProblem.Context}");
             Console.WriteLine();
             
             // Get user input for repair
@@ -287,7 +253,7 @@ namespace TurboMathRally.Core
             bool isCorrect = false;
             if (int.TryParse(userInput.Trim(), out int userAnswer))
             {
-                isCorrect = userAnswer == correctAnswer;
+                isCorrect = userAnswer == storyProblem.Answer;
             }
             
             Console.WriteLine();
@@ -309,7 +275,7 @@ namespace TurboMathRally.Core
             else
             {
                 ConsoleHelper.DisplayError("❌ That's not quite right...");
-                Console.WriteLine($"💡 The correct answer was: {correctAnswer}");
+                Console.WriteLine($"💡 The correct answer was: {storyProblem.Answer}");
                 Console.WriteLine();
                 Console.WriteLine("🚨 The mechanic shakes their head sadly...");
                 Console.WriteLine("💔 Your car couldn't be repaired this time.");
