@@ -8,19 +8,19 @@
 Create math problem generation system for all four basic operations with age-appropriate difficulty levels.
 
 ## Acceptance Criteria
-- [ ] Generate addition problems (single/double digit)
-- [ ] Generate subtraction problems (no negative results)
-- [ ] Generate multiplication problems (times tables 1-12)
-- [ ] Generate division problems (with/without remainders)
-- [ ] Problem difficulty scales with age groups
-- [ ] Random problem generation within constraints
+- [x] Generate addition problems (single/double digit)
+- [x] Generate subtraction problems (no negative results)
+- [x] Generate multiplication problems (times tables 1-12)
+- [x] Generate division problems (with/without remainders)
+- [x] Problem difficulty scales with age groups
+- [x] Random problem generation within constraints
 
 ## Tasks
-- [ ] Create `MathProblem` data model
-- [ ] Implement `ProblemGenerator` class
-- [ ] Add difficulty level configurations
-- [ ] Create problem validation logic
-- [ ] Test problem generation for all operations
+- [x] Create `MathProblem` data model
+- [x] Implement `ProblemGenerator` class
+- [x] Add difficulty level configurations
+- [x] Create problem validation logic
+- [x] Test problem generation for all operations
 
 ## Age Group Configurations
 **Ages 5-7 (Rookie Rally):**

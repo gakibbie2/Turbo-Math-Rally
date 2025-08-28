@@ -112,13 +112,47 @@ namespace TurboMathRally.Core
         {
             ConsoleHelper.DisplayHeader("SETTINGS");
             
-            Console.WriteLine("⚙️  Settings coming in future update!");
-            Console.WriteLine();
-            ConsoleHelper.DisplayMenuOption(1, "🔙 Back to Main Menu");
+            ConsoleHelper.DisplayMenuOption(1, "🧮 Test Math Engine");
+            ConsoleHelper.DisplayMenuOption(2, "⚙️  Other Settings (Coming Soon)");
+            ConsoleHelper.DisplayMenuOption(3, "🔙 Back to Main Menu");
             
             Console.WriteLine();
-            ConsoleHelper.GetUserInput("Press Enter to continue");
+            string input = ConsoleHelper.GetUserInput("Select option (1-3)");
             
+            return input switch
+            {
+                "1" => TestMathEngine(),
+                "2" => DisplayComingSoon("Settings"),
+                "3" => GameState.Menu,
+                _ => HandleInvalidInput("Invalid selection. Please choose 1-3.")
+            };
+        }
+        
+        /// <summary>
+        /// Test the math engine and return to settings
+        /// </summary>
+        private GameState TestMathEngine()
+        {
+            MathTester.TestMathEngine();
+            return GameState.Menu; // Return to main menu after test
+        }
+        
+        /// <summary>
+        /// Display a coming soon message
+        /// </summary>
+        private GameState DisplayComingSoon(string feature)
+        {
+            ConsoleHelper.DisplayHeader($"{feature.ToUpper()} - COMING SOON");
+            
+            Console.WriteLine($"🚧 {feature} will be available in a future update!");
+            Console.WriteLine();
+            Console.WriteLine("Coming soon:");
+            Console.WriteLine("• Sound effects toggle");
+            Console.WriteLine("• Difficulty adjustment");
+            Console.WriteLine("• Color theme selection");
+            Console.WriteLine("• And more!");
+            
+            ConsoleHelper.WaitForKeyPress();
             return GameState.Menu;
         }
         
