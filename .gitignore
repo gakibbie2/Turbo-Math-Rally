@@ -1,0 +1,24 @@
+# Build artifacts
+bin/
+obj/
+*.exe
+
+# IDE files
+.vscode/
+.vs/
+*.suo
+*.user
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Future features (not in MVP)
+ghost-data/
+save-files/
+custom-tracks/
