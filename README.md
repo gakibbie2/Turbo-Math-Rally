@@ -1,5 +1,9 @@
 # Turbo Math Rally 🏎️➕
 
+**Version**: 0.1.0-alpha  
+**Status**: MVP Development (Week 1)  
+**Target MVP Date**: Thursday, September 4, 2025
+
 A rally racing math game for ages 5-12 where players solve math problems to advance through rally stages.
 
 ## Game Overview

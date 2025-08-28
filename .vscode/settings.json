@@ -1,0 +1,10 @@
+{
+    "dotnetAcquisitionExtension.enableTelemetry": false,
+    "omnisharp.enableEditorConfigSupport": true,
+    "omnisharp.enableImportCompletion": true,
+    "omnisharp.enableRoslynAnalyzers": true,
+    "files.exclude": {
+        "**/bin": true,
+        "**/obj": true
+    }
+}

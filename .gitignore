@@ -1,13 +1,22 @@
-# Build artifacts
+# .NET Core
 bin/
 obj/
-*.exe
-
-# IDE files
-.vscode/
-.vs/
-*.suo
 *.user
+*.suo
+*.cache
+*.docstates
+[Dd]ebug/
+[Rr]elease/
+
+# Visual Studio Code - Include configuration but exclude user-specific files
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# User-specific files
+*.rsuser
+*.userprefs
 
 # OS files
 .DS_Store
