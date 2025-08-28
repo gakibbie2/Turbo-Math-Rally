@@ -93,15 +93,23 @@ namespace TurboMathRally.Core
             // Reset validator stats for this race
             _answerValidator.ResetStats();
             
-            // Generate problems for this stage (5 problems per stage)
-            const int questionsPerStage = 5;
+            // Generate problems for this stage (varies by difficulty)
+            int questionsPerStage = _gameConfig.SelectedDifficulty switch
+            {
+                DifficultyLevel.Rookie => 25,    // Ages 5-7: Shorter stages
+                DifficultyLevel.Junior => 35,    // Ages 7-9: Medium stages  
+                DifficultyLevel.Pro => 50,       // Ages 9-12: Long stages
+                _ => 25
+            };
+            
             int mistakes = 0;
             const int maxMistakes = 3;
             
             for (int i = 1; i <= questionsPerStage; i++)
             {
                 Console.WriteLine($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-                Console.WriteLine($"🏎️  Question {i}/{questionsPerStage}");
+                Console.WriteLine($"🏎️  Question {i}/{questionsPerStage} | Stage Progress: {(double)i / questionsPerStage * 100:F0}%");
+                Console.WriteLine($"🏁 {_gameConfig.SelectedSeriesName} - {_gameConfig.SelectedMathTypeName}");
                 Console.WriteLine($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
                 Console.WriteLine();
                 
@@ -170,6 +178,15 @@ namespace TurboMathRally.Core
                 Console.WriteLine();
                 Console.WriteLine($"🎯 Current accuracy: {result.AccuracyPercentage:F1}%");
                 Console.WriteLine($"❌ Mistakes: {mistakes}/{maxMistakes}");
+                
+                // Show milestone encouragement
+                double progress = (double)i / questionsPerStage;
+                if (i == (int)(questionsPerStage * 0.25))
+                    Console.WriteLine("🚗 25% complete - You're cruising!");
+                else if (i == (int)(questionsPerStage * 0.50))
+                    Console.WriteLine("🏁 Halfway there - Keep up the great pace!");
+                else if (i == (int)(questionsPerStage * 0.75))
+                    Console.WriteLine("🚀 75% complete - Final stretch ahead!");
                 
                 if (i < questionsPerStage)
                 {
