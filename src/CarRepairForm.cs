@@ -1,7 +1,7 @@
 using TurboMathRally.Core;
 using TurboMathRally.Math;
 
-namespace TurboMathRally.WinForms
+namespace TurboMathRally
 {
     /// <summary>
     /// Form for handling car repair story problems when car breaks down

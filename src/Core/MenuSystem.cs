@@ -16,22 +16,24 @@ namespace TurboMathRally.Core
             ConsoleHelper.DisplayHeader("TURBO MATH RALLY - MAIN MENU");
             
             ConsoleHelper.DisplayMenuOption(1, "🏁 Start Racing");
-            ConsoleHelper.DisplayMenuOption(2, "⚙️  Settings");
-            ConsoleHelper.DisplayMenuOption(3, "📊 Parent Dashboard");
-            ConsoleHelper.DisplayMenuOption(4, "ℹ️  About");
-            ConsoleHelper.DisplayMenuOption(5, "🚪 Exit");
+            ConsoleHelper.DisplayMenuOption(2, "🏆 Achievement Gallery");
+            ConsoleHelper.DisplayMenuOption(3, "⚙️  Settings");
+            ConsoleHelper.DisplayMenuOption(4, "📊 Parent Dashboard");
+            ConsoleHelper.DisplayMenuOption(5, "ℹ️  About");
+            ConsoleHelper.DisplayMenuOption(6, "🚪 Exit");
             
             Console.WriteLine();
-            string input = ConsoleHelper.GetUserInput("Select an option (1-5)");
+            string input = ConsoleHelper.GetUserInput("Select an option (1-6)");
             
             return input switch
             {
                 "1" => GameState.ModeSelection,
-                "2" => DisplaySettingsMenu(),
-                "3" => GameState.ParentDashboard,
-                "4" => DisplayAbout(),
-                "5" => GameState.Exit,
-                _ => HandleInvalidInput("Invalid selection. Please choose 1-5.")
+                "2" => GameState.Achievements,  // NEW: Achievement Gallery
+                "3" => DisplaySettingsMenu(),
+                "4" => GameState.ParentDashboard,
+                "5" => DisplayAbout(),
+                "6" => GameState.Exit,
+                _ => HandleInvalidInput("Invalid selection. Please choose 1-6.")
             };
         }
         

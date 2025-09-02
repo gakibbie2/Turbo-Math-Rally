@@ -15,6 +15,7 @@ namespace TurboMathRally.Core
         private readonly GameConfiguration _gameConfig;
         private readonly CarBreakdownSystem _carBreakdownSystem;
         private readonly StoryProblemGenerator _storyProblemGenerator;
+        private readonly GameSession _gameSession;  // NEW: Session tracking with achievements
         private bool _isRunning;
         private bool _isContinuingRace = false;  // Track if we're continuing after repair
         private int _currentQuestionNumber = 1;  // Track current question in race
@@ -33,6 +34,7 @@ namespace TurboMathRally.Core
             _problemGenerator = new ProblemGenerator();
             _carBreakdownSystem = new CarBreakdownSystem();
             _storyProblemGenerator = new StoryProblemGenerator();
+            _gameSession = new GameSession();  // NEW: Initialize session tracking
             _isRunning = true;
         }
         
@@ -57,6 +59,7 @@ namespace TurboMathRally.Core
                         GameState.CarRepair => HandleCarRepair(),
                         GameState.StageComplete => HandleStageComplete(),
                         GameState.GameOver => HandleGameOver(),
+                        GameState.Achievements => HandleAchievements(),  // NEW: Achievement gallery
                         GameState.ParentDashboard => HandleParentDashboard(),
                         GameState.Exit => HandleExit(),
                         _ => GameState.Menu
@@ -166,10 +169,15 @@ namespace TurboMathRally.Core
                 Console.WriteLine();
                 
                 // Get user input
+                DateTime answerStartTime = DateTime.Now;  // Track response time
                 string userInput = ConsoleHelper.GetUserInput("Your answer");
+                double responseTime = (DateTime.Now - answerStartTime).TotalSeconds;
                 
                 // Validate the answer
                 ValidationResult result = _answerValidator.ValidateAnswer(problem, userInput);
+                
+                // Record answer in game session for achievements and statistics
+                _gameSession.RecordAnswer(result.IsCorrect && result.IsValid, responseTime);
                 
                 // Display feedback
                 Console.WriteLine();
@@ -221,6 +229,10 @@ namespace TurboMathRally.Core
                     }
                 }
                 
+                // Check for achievement unlocks and display them
+                _gameSession.CheckAchievements(_gameConfig);
+                _gameSession.DisplayRecentAchievements();
+                
                 // Brief pause for readability before next question (only if not the last question)
                 if (i < questionsPerStage)
                 {
@@ -235,6 +247,13 @@ namespace TurboMathRally.Core
             Console.WriteLine();
             ConsoleHelper.DisplaySuccess("🏆 STAGE COMPLETED! 🏆");
             Console.WriteLine();
+            
+            // Record stage completion for achievements
+            _gameSession.RecordStageCompletion();
+            
+            // Check for major achievements (stage completion, series completion, etc.)
+            _gameSession.CheckAchievements(_gameConfig);
+            _gameSession.DisplayRecentAchievements();
             
             // Calculate race time and display comprehensive stats
             DateTime raceEndTime = DateTime.Now;
@@ -424,10 +443,29 @@ namespace TurboMathRally.Core
             Console.WriteLine("🧮 Keep practicing those math skills!");
             Console.WriteLine("🏁 See you on the track next time!");
             Console.WriteLine();
+            
+            // Display final session summary including achievements
+            Console.WriteLine("🏆 FINAL SESSION SUMMARY:");
+            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            _gameSession.DisplaySessionSummary();
+            Console.WriteLine();
+            
             ConsoleHelper.DisplaySuccess("Drive safe! 🚗💨");
             
             _isRunning = false;
             return GameState.Exit;
+        }
+        
+        /// <summary>
+        /// Handle achievements gallery display
+        /// </summary>
+        private GameState HandleAchievements()
+        {
+            // Display the full achievements gallery
+            _gameSession.AchievementManager.DisplayAchievements();
+            
+            // Return to main menu
+            return GameState.Menu;
         }
         
         /// <summary>

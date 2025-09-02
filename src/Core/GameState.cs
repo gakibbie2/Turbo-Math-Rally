@@ -46,6 +46,11 @@ namespace TurboMathRally.Core
         GameOver,
         
         /// <summary>
+        /// Achievement gallery - view unlocked achievements
+        /// </summary>
+        Achievements,
+        
+        /// <summary>
         /// Parent mode analytics dashboard
         /// </summary>
         ParentDashboard,

@@ -1,6 +1,9 @@
 using TurboMathRally.Core;
+using System.IO;
+using System.Text;
+using System.Linq;
 
-namespace TurboMathRally.WinForms
+namespace TurboMathRally
 {
     /// <summary>
     /// Main menu form for Turbo Math Rally Windows Forms version
@@ -22,7 +25,7 @@ namespace TurboMathRally.WinForms
             this.SuspendLayout();
             this.AutoScaleDimensions = new SizeF(8F, 20F);
             this.AutoScaleMode = AutoScaleMode.Font;
-            this.ClientSize = new Size(800, 600);
+            this.ClientSize = new Size(800, 650);
             this.Text = "🏎️ Turbo Math Rally - Main Menu";
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -63,13 +66,26 @@ namespace TurboMathRally.WinForms
             };
             startRacingButton.Click += StartRacingButton_Click;
             
+            // Achievements button
+            var achievementsButton = new Button
+            {
+                Text = "🏆 Achievements",
+                Font = new Font("Arial", 14, FontStyle.Regular),
+                Size = new Size(250, 50),
+                Location = new Point(275, 290),
+                BackColor = Color.Gold,
+                ForeColor = Color.DarkBlue,
+                FlatStyle = FlatStyle.Flat
+            };
+            achievementsButton.Click += AchievementsButton_Click;
+            
             // Settings button
             var settingsButton = new Button
             {
                 Text = "⚙️ Settings",
                 Font = new Font("Arial", 14, FontStyle.Regular),
                 Size = new Size(200, 50),
-                Location = new Point(300, 290),
+                Location = new Point(300, 360),
                 BackColor = Color.Orange,
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
@@ -82,7 +98,7 @@ namespace TurboMathRally.WinForms
                 Text = "🚪 Exit",
                 Font = new Font("Arial", 14, FontStyle.Regular),
                 Size = new Size(150, 40),
-                Location = new Point(325, 370),
+                Location = new Point(325, 430),
                 BackColor = Color.Crimson,
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
@@ -93,6 +109,7 @@ namespace TurboMathRally.WinForms
             this.Controls.Add(titleLabel);
             this.Controls.Add(subtitleLabel);
             this.Controls.Add(startRacingButton);
+            this.Controls.Add(achievementsButton);
             this.Controls.Add(settingsButton);
             this.Controls.Add(exitButton);
             
@@ -125,6 +142,94 @@ namespace TurboMathRally.WinForms
             
             // Return to main menu
             this.Show();
+        }
+        
+        private void AchievementsButton_Click(object? sender, EventArgs e)
+        {
+            // Create a simple achievement manager to display achievements
+            var achievementManager = new TurboMathRally.Core.Achievements.AchievementManager();
+            
+            // Create an achievement display form
+            var achievementForm = new Form
+            {
+                Text = "🏆 Achievement Gallery",
+                Size = new Size(800, 600),
+                StartPosition = FormStartPosition.CenterParent,
+                BackColor = Color.LightBlue,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false,
+                MinimizeBox = false
+            };
+            
+            // Create a rich text box to display achievements
+            var achievementTextBox = new RichTextBox
+            {
+                ReadOnly = true,
+                ScrollBars = RichTextBoxScrollBars.Vertical,
+                Size = new Size(760, 500),
+                Location = new Point(20, 20),
+                BackColor = Color.White,
+                Font = new Font("Courier New", 10)
+            };
+            
+            // Build achievement display text directly
+            var achievementText = new System.Text.StringBuilder();
+            achievementText.AppendLine("🏆 TURBO MATH RALLY - ACHIEVEMENT GALLERY 🏆");
+            achievementText.AppendLine("===========================================\n");
+            
+            // Get achievements by category
+            var categories = new[]
+            {
+                TurboMathRally.Core.Achievements.AchievementType.Accuracy,
+                TurboMathRally.Core.Achievements.AchievementType.Streak,
+                TurboMathRally.Core.Achievements.AchievementType.Speed,
+                TurboMathRally.Core.Achievements.AchievementType.Endurance,
+                TurboMathRally.Core.Achievements.AchievementType.Series,
+                TurboMathRally.Core.Achievements.AchievementType.Mastery,
+                TurboMathRally.Core.Achievements.AchievementType.Comeback,
+                TurboMathRally.Core.Achievements.AchievementType.Consistency
+            };
+            
+            foreach (var category in categories)
+            {
+                var categoryAchievements = achievementManager.GetAchievementsByType(category);
+                if (categoryAchievements.Any())
+                {
+                    achievementText.AppendLine($"📂 {category} Achievements:");
+                    achievementText.AppendLine(new string('-', 40));
+                    
+                    foreach (var achievement in categoryAchievements)
+                    {
+                        var status = achievement.IsUnlocked ? "✅ UNLOCKED" : "🔒 Not Unlocked";
+                        var rarity = achievement.GetRarityName();
+                        achievementText.AppendLine($"{status} [{rarity}] {achievement.Title}");
+                        achievementText.AppendLine($"    📝 {achievement.Description}");
+                        if (!achievement.IsUnlocked && achievement.TargetValue > 1)
+                        {
+                            achievementText.AppendLine($"    📊 Progress: {achievement.CurrentValue}/{achievement.TargetValue}");
+                        }
+                        achievementText.AppendLine();
+                    }
+                    achievementText.AppendLine();
+                }
+            }
+            
+            achievementTextBox.Text = achievementText.ToString();
+            
+            // Add close button
+            var closeButton = new Button
+            {
+                Text = "Close",
+                Size = new Size(100, 30),
+                Location = new Point(350, 530),
+                BackColor = Color.LightGray
+            };
+            closeButton.Click += (s, ev) => achievementForm.Close();
+            
+            achievementForm.Controls.Add(achievementTextBox);
+            achievementForm.Controls.Add(closeButton);
+            
+            achievementForm.ShowDialog();
         }
         
         private void SettingsButton_Click(object? sender, EventArgs e)

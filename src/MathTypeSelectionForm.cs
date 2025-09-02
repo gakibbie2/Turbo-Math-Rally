@@ -1,7 +1,7 @@
 using TurboMathRally.Core;
 using TurboMathRally.Math;
 
-namespace TurboMathRally.WinForms
+namespace TurboMathRally
 {
     /// <summary>
     /// Form for selecting math operation type with kid-friendly interface

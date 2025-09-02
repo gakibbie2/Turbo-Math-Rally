@@ -2,7 +2,7 @@ using TurboMathRally.Core;
 using TurboMathRally.Math;
 using TurboMathRally.Utils;
 
-namespace TurboMathRally.WinForms
+namespace TurboMathRally
 {
     /// <summary>
     /// Main game form where the racing and math questions happen
