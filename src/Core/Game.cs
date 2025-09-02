@@ -20,7 +20,6 @@ namespace TurboMathRally.Core
         private int _currentQuestionNumber = 1;  // Track current question in race
         private int _totalQuestionsThisRace = 0; // Track total questions including story problems
         private DateTime _raceStartTime;         // Track race start time for performance metrics
-        private string _lastAnswerResult = "";   // Track last answer result for display
         
         /// <summary>
         /// Initialize a new game instance
@@ -107,7 +106,6 @@ namespace TurboMathRally.Core
                 _currentQuestionNumber = 1;
                 _totalQuestionsThisRace = 0;
                 _raceStartTime = DateTime.Now; // Start timing the race
-                _lastAnswerResult = ""; // Reset last answer result
                 Console.WriteLine("🎯 Starting fresh race statistics...");
                 Console.WriteLine();
             }
@@ -139,10 +137,10 @@ namespace TurboMathRally.Core
                 Console.WriteLine($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
                 Console.WriteLine();
                 
-                // Display enhanced progress bar with live stats, car status, and last answer result
+                // Display enhanced progress bar with live stats and car status
                 ConsoleHelper.DisplayRaceProgressBar(i, questionsPerStage, $"{_gameConfig.SelectedSeriesName} Rally", 
                     _answerValidator.AccuracyPercentage, _answerValidator.CurrentStreak, _answerValidator.BestStreak,
-                    _carBreakdownSystem.GetCompactCarStatus(), _lastAnswerResult);
+                    _carBreakdownSystem.GetCompactCarStatus());
                 Console.WriteLine();
                 
                 // Generate a problem (handle mixed mode)
@@ -172,9 +170,6 @@ namespace TurboMathRally.Core
                 
                 // Validate the answer
                 ValidationResult result = _answerValidator.ValidateAnswer(problem, userInput);
-                
-                // Update last answer result for display in next question
-                _lastAnswerResult = result.IsCorrect ? "✅ Correct" : "❌ Wrong";
                 
                 // Display feedback
                 Console.WriteLine();
@@ -226,14 +221,17 @@ namespace TurboMathRally.Core
                     }
                 }
                 
-                // No wait time - immediate transition to next question
+                // Brief pause for readability before next question (only if not the last question)
+                if (i < questionsPerStage)
+                {
+                    Console.WriteLine("⏱️ Next question in 1 second...");
+                    Thread.Sleep(1000); // Brief pause for smooth transition
+                }
             }
             
             // Stage completed successfully!
             Console.WriteLine();
-            ConsoleHelper.DisplayRaceProgressBar(questionsPerStage, questionsPerStage, $"{_gameConfig.SelectedSeriesName} Rally",
-                _answerValidator.AccuracyPercentage, _answerValidator.CurrentStreak, _answerValidator.BestStreak,
-                _carBreakdownSystem.GetCompactCarStatus(), _lastAnswerResult);
+            ConsoleHelper.DisplayRaceProgressBar(questionsPerStage, questionsPerStage, $"{_gameConfig.SelectedSeriesName} Rally");
             Console.WriteLine();
             ConsoleHelper.DisplaySuccess("🏆 STAGE COMPLETED! 🏆");
             Console.WriteLine();

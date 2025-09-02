@@ -118,9 +118,9 @@ namespace TurboMathRally.Utils
         }
         
         /// <summary>
-        /// Display a rally-themed progress bar with live stats, car status, and last answer result
+        /// Display a rally-themed progress bar with live stats and car status
         /// </summary>
-        public static void DisplayRaceProgressBar(int currentQuestion, int totalQuestions, string stageName, double accuracy, int currentStreak, int bestStreak, string carStatus, string lastAnswerResult = "")
+        public static void DisplayRaceProgressBar(int currentQuestion, int totalQuestions, string stageName, double accuracy, int currentStreak, int bestStreak, string carStatus)
         {
             double progressPercent = (double)currentQuestion / totalQuestions;
             int barWidth = 40; // Width of the progress bar
@@ -166,18 +166,6 @@ namespace TurboMathRally.Utils
                 
                 WriteColored($" | 🏆 Best: ", ConsoleColor.White);
                 WriteColored($"{bestStreak}", ConsoleColor.Yellow);
-                
-                // Display last answer result if available
-                if (!string.IsNullOrEmpty(lastAnswerResult))
-                {
-                    WriteColored($" | Last: ", ConsoleColor.White);
-                    if (lastAnswerResult.Contains("✅"))
-                        WriteColored(lastAnswerResult, ConsoleColor.Green);
-                    else if (lastAnswerResult.Contains("❌"))
-                        WriteColored(lastAnswerResult, ConsoleColor.Red);
-                    else
-                        WriteColored(lastAnswerResult, ConsoleColor.White);
-                }
                 
                 if (!string.IsNullOrEmpty(carStatus))
                 {
