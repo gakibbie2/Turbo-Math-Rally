@@ -1,6 +1,6 @@
 # Semantic Versioning for Turbo Math Rally
 
-## Current Version: 1.0.0
+## Current Version: 2.0.0
 
 ## Versioning Strategy
 
@@ -14,6 +14,27 @@ We follow [Semantic Versioning 2.0.0](https://semver.org/) principles:
 - **PRE-RELEASE**: Alpha, beta, rc (release candidate) versions
 
 ## Version History
+
+### v2.0.0 (2025-09-02) - 🖼️ WINDOWS FORMS GUI & SPEED RACING
+**MAJOR INTERFACE OVERHAUL - Professional GUI with Lightning-Fast Text Input**
+
+#### **Added**
+- ✅ **Professional Windows Forms Interface**: Complete GUI application with polished visual design
+- ✅ **Lightning-Fast Text Input System**: Type answers and press Enter for maximum racing speed
+- ✅ **Clickable Card Interface**: Interactive panels for math operation selection (no separate buttons)
+- ✅ **Silent Operation**: Eliminated Windows sound effects using e.SuppressKeyPress for distraction-free gaming
+- ✅ **Smart Enter Key Handling**: Prevents accidental exits while maintaining rapid answer submission
+- ✅ **Auto-Advance Racing**: Timer-based progression between questions for seamless gameplay
+- ✅ **Consistent Repair Interface**: Text input system for both racing and car repair modes
+- ✅ **TabStop Management**: Buttons set to TabStop=false to prevent unwanted focus stealing
+- ✅ **Form-Level Key Handling**: KeyPreview and form-level KeyDown events for proper key management
+- ✅ **Multi-Project Architecture**: Separated Core logic, WinForms GUI, and Console legacy support
+
+#### **Technical Improvements**
+- ✅ **Project Structure**: Clean separation with TurboMathRally.Core shared library
+- ✅ **Performance Optimizations**: Text input eliminates button click delays for speed racing
+- ✅ **User Experience**: Visual feedback with color-coded answer validation
+- ✅ **Accessibility**: Professional Windows interface with keyboard-first navigation
 
 ### v1.0.0 (2025-08-28) - 🏆 OFFICIAL RELEASE
 **COMPLETE MVP - All Priority 0 Features Implemented**
