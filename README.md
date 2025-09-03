@@ -184,6 +184,25 @@ dotnet run --project src/TurboMathRally.csproj
 - **v3.1**: Multiplayer racing, leaderboards, tournament mode
 - **v4.0**: Mobile support, cross-platform compatibility, Steam distribution
 
+## 📚 Documentation
+
+### 📋 Release Notes & Version History
+- **[Latest Release (v2.1.0)](docs/release-notes/RELEASE_NOTES_v2.1.0.md)** - Achievement fixes & user experience improvements
+- **[Complete Release History](docs/release-notes/)** - All versions with detailed changelogs
+- **[Version Timeline](docs/release-notes/README.md)** - Evolution from console to Windows Forms
+
+### 🎯 User Guides *(Coming Soon)*
+- **Installation Guide** - Step-by-step setup for all user types
+- **Gameplay Guide** - Complete racing and achievement strategies  
+- **Troubleshooting** - Common issues and solutions
+- **Achievement Guide** - Complete list with unlock requirements
+
+### 🔧 Developer Resources *(Coming Soon)*
+- **[Main Documentation Hub](docs/)** - Complete documentation overview
+- **Architecture Guide** - System design and component structure
+- **API Reference** - Code documentation and interfaces
+- **Contributing Guide** - How to participate in development
+
 ## 🤝 Contributing
 
 This project was developed as an educational game for family use. The Windows Forms interface provides a solid foundation for future enhancements. Future contributions welcome for:
