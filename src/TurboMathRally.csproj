@@ -8,9 +8,9 @@
     <Nullable>enable</Nullable>
     
     <!-- Semantic Versioning -->
-    <AssemblyVersion>2.1.0</AssemblyVersion>
-    <FileVersion>2.1.0</FileVersion>
-    <Version>2.1.0</Version>
+    <AssemblyVersion>2.3.0</AssemblyVersion>
+    <FileVersion>2.3.0</FileVersion>
+    <Version>2.3.0</Version>
     
     <!-- Application Information -->
     <AssemblyTitle>Turbo Math Rally</AssemblyTitle>
@@ -19,5 +19,12 @@
     <AssemblyProduct>Turbo Math Rally</AssemblyProduct>
     <Copyright>Copyright © 2025 George Aaron Kibbie</Copyright>
   </PropertyGroup>
+
+  <!-- Include Assets as Content -->
+  <ItemGroup>
+    <Content Include="Assets\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
 </Project>

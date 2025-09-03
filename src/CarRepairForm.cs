@@ -22,6 +22,7 @@ namespace TurboMathRally
         // UI Controls - initialized in InitializeComponent
         private Label _headerLabel = null!;
         private Label _carStatusLabel = null!;
+        private PictureBox _toolImageBox = null!; // NEW: Visual tool representation
         private Label _storyLabel = null!;
         private Label _contextLabel = null!;
         private Label _questionLabel = null!;
@@ -91,6 +92,23 @@ namespace TurboMathRally
                 TextAlign = ContentAlignment.MiddleCenter,
                 ForeColor = Color.FromArgb(178, 34, 34)
             };
+            
+            // Tool image for visual appeal
+            _toolImageBox = new PictureBox
+            {
+                Size = new Size(60, 40),
+                Location = new Point(420, 115),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                BackColor = Color.Transparent
+            };
+            
+            // Try to load a tool/wrench image from generic items
+            // Items 058-068 are typically tools in Kenney's generic item pack
+            var toolImage = AssetManager.GetGenericItemImage(60); // Should be a wrench or tool
+            if (toolImage != null)
+            {
+                _toolImageBox.Image = toolImage;
+            }
             
             // Story section
             _storyLabel = new Label
@@ -195,6 +213,7 @@ namespace TurboMathRally
             // Add all controls
             this.Controls.Add(_headerLabel);
             this.Controls.Add(_carStatusLabel);
+            this.Controls.Add(_toolImageBox);
             this.Controls.Add(_storyLabel);
             this.Controls.Add(_contextLabel);
             this.Controls.Add(_questionLabel);

@@ -1,4 +1,5 @@
 using TurboMathRally.Core;
+using TurboMathRally.Utils;
 using System.IO;
 using System.Text;
 using System.Linq;
@@ -55,13 +56,34 @@ namespace TurboMathRally
                 TextAlign = ContentAlignment.MiddleCenter
             };
             
+            // Race car image
+            var raceCarPictureBox = new PictureBox
+            {
+                Size = new Size(100, 60),
+                Location = new Point(350, 155),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                BackColor = Color.Transparent
+            };
+            
+            // Try to load race car image from assets
+            var carImage = AssetManager.GetRaceCarImage("red", 1);
+            if (carImage != null)
+            {
+                raceCarPictureBox.Image = carImage;
+            }
+            else
+            {
+                // Fallback to text if image not found
+                raceCarPictureBox.Visible = false;
+            }
+            
             // Start Racing button
             var startRacingButton = new Button
             {
                 Text = "🏁 Start Racing",
                 Font = new Font("Arial", 16, FontStyle.Bold),
                 Size = new Size(300, 60),
-                Location = new Point(250, 200),
+                Location = new Point(250, 230),
                 BackColor = Color.LimeGreen,
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
@@ -74,7 +96,7 @@ namespace TurboMathRally
                 Text = "🏆 Achievements",
                 Font = new Font("Arial", 14, FontStyle.Regular),
                 Size = new Size(250, 50),
-                Location = new Point(275, 290),
+                Location = new Point(275, 320),
                 BackColor = Color.Gold,
                 ForeColor = Color.DarkBlue,
                 FlatStyle = FlatStyle.Flat
@@ -87,7 +109,7 @@ namespace TurboMathRally
                 Text = "⚙️ Settings",
                 Font = new Font("Arial", 14, FontStyle.Regular),
                 Size = new Size(200, 50),
-                Location = new Point(300, 360),
+                Location = new Point(300, 390),
                 BackColor = Color.Orange,
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
@@ -110,6 +132,7 @@ namespace TurboMathRally
             // Add controls to form
             this.Controls.Add(titleLabel);
             this.Controls.Add(subtitleLabel);
+            this.Controls.Add(raceCarPictureBox);
             this.Controls.Add(startRacingButton);
             this.Controls.Add(achievementsButton);
             this.Controls.Add(settingsButton);

@@ -29,6 +29,7 @@ namespace TurboMathRally
         private ProgressBar _progressBar = null!;
         private Label _statsLabel = null!;
         private Label _carStatusLabel = null!;
+        private PictureBox _carImageBox = null!; // NEW: Visual car representation
         private Label _questionLabel = null!;
         private TextBox _answerTextBox = null!;
         private Label _instructionLabel = null!;
@@ -140,6 +141,22 @@ namespace TurboMathRally
                 ForeColor = Color.FromArgb(34, 139, 34)
             };
             
+            // Car image visualization
+            _carImageBox = new PictureBox
+            {
+                Size = new Size(40, 25),
+                Location = new Point(635, 112),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                BackColor = Color.Transparent
+            };
+            
+            // Try to load initial car image
+            var initialCarImage = AssetManager.GetSmallRaceCarImage("red", 1);
+            if (initialCarImage != null)
+            {
+                _carImageBox.Image = initialCarImage;
+            }
+            
             // Keyboard instruction
             _instructionLabel = new Label
             {
@@ -208,6 +225,7 @@ namespace TurboMathRally
             this.Controls.Add(_progressBar);
             this.Controls.Add(_statsLabel);
             this.Controls.Add(_carStatusLabel);
+            this.Controls.Add(_carImageBox);
             this.Controls.Add(_instructionLabel);
             this.Controls.Add(_questionLabel);
             this.Controls.Add(_answerTextBox);
@@ -263,15 +281,36 @@ namespace TurboMathRally
             var carStatus = _carBreakdownSystem.GetCompactCarStatus();
             _carStatusLabel.Text = $"🚗 {carStatus}";
             
-            // Update car status color based on condition
+            // Update car status color and image based on condition
+            string carColor = "red"; // Default color
             if (carStatus.Contains("Perfect"))
+            {
                 _carStatusLabel.ForeColor = Color.FromArgb(34, 139, 34);
+                carColor = "green";
+            }
             else if (carStatus.Contains("Minor") || carStatus.Contains("Light"))
+            {
                 _carStatusLabel.ForeColor = Color.FromArgb(255, 165, 0);
+                carColor = "yellow";
+            }
             else if (carStatus.Contains("Moderate"))
+            {
                 _carStatusLabel.ForeColor = Color.FromArgb(255, 69, 0);
+                carColor = "red";
+            }
             else
+            {
                 _carStatusLabel.ForeColor = Color.FromArgb(178, 34, 34);
+                carColor = "black"; // Broken down
+            }
+            
+            // Update car image based on condition
+            var carImage = AssetManager.GetSmallRaceCarImage(carColor, 1);
+            if (carImage != null)
+            {
+                _carImageBox.Image?.Dispose(); // Clean up old image
+                _carImageBox.Image = carImage;
+            }
             
             // Update question
             _questionLabel.Text = _currentProblem.Question;
