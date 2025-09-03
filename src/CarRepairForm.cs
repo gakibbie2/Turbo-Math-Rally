@@ -1,5 +1,6 @@
 using TurboMathRally.Core;
 using TurboMathRally.Math;
+using TurboMathRally.Utils;
 
 namespace TurboMathRally
 {
@@ -12,6 +13,7 @@ namespace TurboMathRally
         private readonly CarBreakdownSystem _carBreakdownSystem;
         private readonly StoryProblemGenerator _storyProblemGenerator;
         private readonly AnswerValidator _answerValidator;
+        private readonly SoundManager _soundManager;
         
         private StoryProblem _currentStoryProblem = null!;
         private int _repairAttempts = 0;
@@ -35,6 +37,16 @@ namespace TurboMathRally
             _carBreakdownSystem = carBreakdownSystem;
             _storyProblemGenerator = storyProblemGenerator;
             _answerValidator = new AnswerValidator();
+            
+            // Initialize sound manager with user's volume preference
+            if (Program.ProfileManager?.CurrentProfile != null)
+            {
+                _soundManager = new SoundManager(Program.ProfileManager.CurrentProfile.Settings.SoundVolume);
+            }
+            else
+            {
+                _soundManager = new SoundManager(0.7f);
+            }
             
             InitializeComponent();
             StartRepair();
@@ -296,6 +308,9 @@ namespace TurboMathRally
                 _feedbackLabel.Text = "🎉 Perfect! The mechanic fixes your car! 🔧✨";
                 _feedbackLabel.ForeColor = Color.FromArgb(34, 139, 34);
                 _answerTextBox.BackColor = Color.FromArgb(144, 238, 144);
+                
+                // Play repair success sound
+                _soundManager.PlayCarRepaired();
                 
                 // Repair the car
                 _carBreakdownSystem.Reset();

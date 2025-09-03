@@ -15,6 +15,7 @@ namespace TurboMathRally
         private readonly CarBreakdownSystem _carBreakdownSystem;
         private readonly StoryProblemGenerator _storyProblemGenerator;
         private readonly GameSession _gameSession;  // NEW: Session tracking with achievements
+        private readonly SoundManager _soundManager; // NEW: Sound effects manager
         
         // Game state
         private int _currentQuestionNumber = 1;
@@ -46,10 +47,13 @@ namespace TurboMathRally
             if (Program.ProfileManager != null)
             {
                 _gameSession = new GameSession(Program.ProfileManager);
+                // Initialize sound manager with user's volume preference
+                _soundManager = new SoundManager(Program.ProfileManager.CurrentProfile?.Settings.SoundVolume ?? 0.7f);
             }
             else
             {
                 _gameSession = new GameSession();
+                _soundManager = new SoundManager(0.7f);
             }
             
             // Set questions per stage based on difficulty
@@ -64,6 +68,10 @@ namespace TurboMathRally
             _raceStartTime = DateTime.Now;
             
             InitializeComponent();
+            
+            // Play engine start sound when race begins
+            _soundManager.PlayEngineStart();
+            
             StartNextQuestion();
         }
         
@@ -310,6 +318,9 @@ namespace TurboMathRally
                 _feedbackLabel.Text = "🎉 Correct! Your car speeds ahead! 🚀";
                 _feedbackLabel.ForeColor = Color.FromArgb(34, 139, 34);
                 _answerTextBox.BackColor = Color.FromArgb(144, 238, 144);
+                
+                // Play success sound
+                _soundManager.PlayCorrectAnswer();
             }
             else
             {
@@ -317,12 +328,16 @@ namespace TurboMathRally
                 _feedbackLabel.ForeColor = Color.FromArgb(178, 34, 34);
                 _answerTextBox.BackColor = Color.FromArgb(255, 182, 193);
                 
+                // Play error sound
+                _soundManager.PlayIncorrectAnswer();
+                
                 // Add strike to car breakdown system
                 StrikeResult strikeResult = _carBreakdownSystem.AddStrike();
                 
                 if (strikeResult.WarningLevel == WarningLevel.Breakdown)
                 {
                     // Car breakdown - show repair form
+                    _soundManager.PlayCarBreakdown();
                     ShowCarRepair();
                     return;
                 }
@@ -411,6 +426,9 @@ namespace TurboMathRally
         
         private async void CompleteRace()
         {
+            // Play stage completion fanfare
+            _soundManager.PlayStageComplete();
+            
             // Record stage completion
             _gameSession.RecordStageCompletion();
             

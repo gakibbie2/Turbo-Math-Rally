@@ -10,6 +10,7 @@ namespace TurboMathRally.Core.Achievements
     {
         private readonly Dictionary<string, Achievement> _achievements;
         private readonly List<Achievement> _recentUnlocks;
+        private readonly SoundManager? _soundManager;
 
         /// <summary>
         /// Event fired when an achievement is unlocked
@@ -55,6 +56,7 @@ namespace TurboMathRally.Core.Achievements
         {
             _achievements = new Dictionary<string, Achievement>();
             _recentUnlocks = new List<Achievement>();
+            _soundManager = new SoundManager(0.7f); // Default volume
             
             InitializeAchievements();
         }
@@ -65,6 +67,13 @@ namespace TurboMathRally.Core.Achievements
         public AchievementManager(ProfileManager profileManager) : this()
         {
             _profileManager = profileManager;
+            
+            // Initialize sound manager with user's volume preference
+            if (profileManager.CurrentProfile?.Settings != null)
+            {
+                _soundManager = new SoundManager(profileManager.CurrentProfile.Settings.SoundVolume);
+            }
+            
             LoadAchievementProgress();
         }
 
@@ -293,6 +302,9 @@ namespace TurboMathRally.Core.Achievements
             {
                 achievement.Unlock();
                 _recentUnlocks.Add(achievement);
+                
+                // Play achievement unlock sound
+                _soundManager?.PlayAchievementUnlock();
                 
                 // Save to profile if available
                 if (_profileManager != null)
