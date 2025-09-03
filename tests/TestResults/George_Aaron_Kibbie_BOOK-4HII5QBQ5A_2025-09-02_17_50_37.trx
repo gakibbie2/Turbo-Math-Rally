@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="1aee1d91-0457-4698-802e-c193628d8215" name="George Aaron Kibbie@BOOK-4HII5QBQ5A 2025-09-02 17:50:37" runUser="BOOK-4HII5QBQ5A\George Aaron Kibbie" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2025-09-02T17:50:37.0619812-06:00" queuing="2025-09-02T17:50:37.0619818-06:00" start="2025-09-02T17:50:34.1464734-06:00" finish="2025-09-02T17:50:37.0669889-06:00" />
+  <TestSettings name="default" id="e0282488-c5ec-4ee3-b0f9-8a34060e584a">
+    <Deployment runDeploymentRoot="George_Aaron_Kibbie_BOOK-4HII5QBQ5A_2025-09-02_17_50_37" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="fe9610b8-f681-47d4-867f-2fda2779683a" testId="243004af-1dd5-a134-d02e-30d22aab4a61" testName="TurboMathRally.Tests.Core.UserProfileTests.UserProfile_CreatedDate_IsReasonable" computerName="BOOK-4HII5QBQ5A" duration="00:00:00.0015887" startTime="2025-09-02T17:50:36.9944723-06:00" endTime="2025-09-02T17:50:36.9944724-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fe9610b8-f681-47d4-867f-2fda2779683a" />
+    <UnitTestResult executionId="0dc7cffe-fb88-420d-b123-bdff7a96b485" testId="b6474e0c-5d6a-44ec-dcd4-246cbf248a91" testName="TurboMathRally.Tests.Core.AnswerValidatorTests.AnswerValidator_TracksAccuracy" computerName="BOOK-4HII5QBQ5A" duration="00:00:00.0023903" startTime="2025-09-02T17:50:36.9937020-06:00" endTime="2025-09-02T17:50:36.9937024-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0dc7cffe-fb88-420d-b123-bdff7a96b485" />
+    <UnitTestResult executionId="e896b4d2-5c48-493c-9315-30bddae19fd3" testId="2fb42ad0-cda8-7b58-6738-16ec8d0d840e" testName="TurboMathRally.Tests.Core.UserProfileTests.UserProfile_DefaultConstruction_HasValidDefaults" computerName="BOOK-4HII5QBQ5A" duration="00:00:00.0012742" startTime="2025-09-02T17:50:36.9933997-06:00" endTime="2025-09-02T17:50:36.9933997-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e896b4d2-5c48-493c-9315-30bddae19fd3" />
+    <UnitTestResult executionId="a7477841-b6c5-435e-aa4b-2466fb353fad" testId="866d895f-1714-f753-d0a4-87a44cb0d622" testName="TurboMathRally.Tests.Core.AnswerValidatorTests.AnswerValidator_ValidInput_ValidatesCorrectly" computerName="BOOK-4HII5QBQ5A" duration="00:00:00.0008647" startTime="2025-09-02T17:50:36.9933151-06:00" endTime="2025-09-02T17:50:36.9933153-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a7477841-b6c5-435e-aa4b-2466fb353fad" />
+    <UnitTestResult executionId="d5be487a-cde0-4cf7-a001-792b486c9673" testId="1c57b08a-4c2c-5de7-9b2e-f27029910031" testName="TurboMathRally.Tests.Core.AnswerValidatorTests.AnswerValidator_InvalidInput_ReturnsInvalid" computerName="BOOK-4HII5QBQ5A" duration="00:00:00.0006430" startTime="2025-09-02T17:50:36.9943734-06:00" endTime="2025-09-02T17:50:36.9943740-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d5be487a-cde0-4cf7-a001-792b486c9673" />
+    <UnitTestResult executionId="922fd53a-a602-456b-be6d-3583d460c9b9" testId="c7767b0b-574c-43c6-b654-e0e8334f696a" testName="TurboMathRally.Tests.Core.UserProfileTests.UserProfile_Settings_HasValidDefaults" computerName="BOOK-4HII5QBQ5A" duration="00:00:00.8372875" startTime="2025-09-02T17:50:36.9926989-06:00" endTime="2025-09-02T17:50:36.9926991-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="922fd53a-a602-456b-be6d-3583d460c9b9" />
+    <UnitTestResult executionId="1bec9149-0461-44f8-99d7-b1dc130bb503" testId="9392345b-af7a-d2b8-b0ec-08d8c8d4a1c2" testName="TurboMathRally.Tests.Core.UserProfileTests.UserProfile_CanModifyPlayerName" computerName="BOOK-4HII5QBQ5A" duration="00:00:00.0002057" startTime="2025-09-02T17:50:36.9934484-06:00" endTime="2025-09-02T17:50:36.9934485-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1bec9149-0461-44f8-99d7-b1dc130bb503" />
+    <UnitTestResult executionId="649a4229-58e0-4f47-babc-b57474ec9118" testId="a699277f-fdfe-c76b-d6d8-0a99c3a8c3a4" testName="TurboMathRally.Tests.Core.AnswerValidatorTests.AnswerValidator_TracksStreak" computerName="BOOK-4HII5QBQ5A" duration="00:00:00.8336128" startTime="2025-09-02T17:50:36.9906026-06:00" endTime="2025-09-02T17:50:36.9906236-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="649a4229-58e0-4f47-babc-b57474ec9118" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TurboMathRally.Tests.Core.AnswerValidatorTests.AnswerValidator_TracksAccuracy" storage="c:\users\george aaron kibbie\documents\aidens projects\in progress\turbo math rally\tests\bin\debug\net9.0-windows\turbomathrally.tests.dll" id="b6474e0c-5d6a-44ec-dcd4-246cbf248a91">
+      <Execution id="0dc7cffe-fb88-420d-b123-bdff7a96b485" />
+      <TestMethod codeBase="C:\Users\George Aaron Kibbie\Documents\Aidens Projects\In progress\Turbo Math Rally\tests\bin\Debug\net9.0-windows\TurboMathRally.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TurboMathRally.Tests.Core.AnswerValidatorTests" name="AnswerValidator_TracksAccuracy" />
+    </UnitTest>
+    <UnitTest name="TurboMathRally.Tests.Core.UserProfileTests.UserProfile_CreatedDate_IsReasonable" storage="c:\users\george aaron kibbie\documents\aidens projects\in progress\turbo math rally\tests\bin\debug\net9.0-windows\turbomathrally.tests.dll" id="243004af-1dd5-a134-d02e-30d22aab4a61">
+      <Execution id="fe9610b8-f681-47d4-867f-2fda2779683a" />
+      <TestMethod codeBase="C:\Users\George Aaron Kibbie\Documents\Aidens Projects\In progress\Turbo Math Rally\tests\bin\Debug\net9.0-windows\TurboMathRally.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TurboMathRally.Tests.Core.UserProfileTests" name="UserProfile_CreatedDate_IsReasonable" />
+    </UnitTest>
+    <UnitTest name="TurboMathRally.Tests.Core.AnswerValidatorTests.AnswerValidator_InvalidInput_ReturnsInvalid" storage="c:\users\george aaron kibbie\documents\aidens projects\in progress\turbo math rally\tests\bin\debug\net9.0-windows\turbomathrally.tests.dll" id="1c57b08a-4c2c-5de7-9b2e-f27029910031">
+      <Execution id="d5be487a-cde0-4cf7-a001-792b486c9673" />
+      <TestMethod codeBase="C:\Users\George Aaron Kibbie\Documents\Aidens Projects\In progress\Turbo Math Rally\tests\bin\Debug\net9.0-windows\TurboMathRally.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TurboMathRally.Tests.Core.AnswerValidatorTests" name="AnswerValidator_InvalidInput_ReturnsInvalid" />
+    </UnitTest>
+    <UnitTest name="TurboMathRally.Tests.Core.UserProfileTests.UserProfile_Settings_HasValidDefaults" storage="c:\users\george aaron kibbie\documents\aidens projects\in progress\turbo math rally\tests\bin\debug\net9.0-windows\turbomathrally.tests.dll" id="c7767b0b-574c-43c6-b654-e0e8334f696a">
+      <Execution id="922fd53a-a602-456b-be6d-3583d460c9b9" />
+      <TestMethod codeBase="C:\Users\George Aaron Kibbie\Documents\Aidens Projects\In progress\Turbo Math Rally\tests\bin\Debug\net9.0-windows\TurboMathRally.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TurboMathRally.Tests.Core.UserProfileTests" name="UserProfile_Settings_HasValidDefaults" />
+    </UnitTest>
+    <UnitTest name="TurboMathRally.Tests.Core.AnswerValidatorTests.AnswerValidator_ValidInput_ValidatesCorrectly" storage="c:\users\george aaron kibbie\documents\aidens projects\in progress\turbo math rally\tests\bin\debug\net9.0-windows\turbomathrally.tests.dll" id="866d895f-1714-f753-d0a4-87a44cb0d622">
+      <Execution id="a7477841-b6c5-435e-aa4b-2466fb353fad" />
+      <TestMethod codeBase="C:\Users\George Aaron Kibbie\Documents\Aidens Projects\In progress\Turbo Math Rally\tests\bin\Debug\net9.0-windows\TurboMathRally.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TurboMathRally.Tests.Core.AnswerValidatorTests" name="AnswerValidator_ValidInput_ValidatesCorrectly" />
+    </UnitTest>
+    <UnitTest name="TurboMathRally.Tests.Core.AnswerValidatorTests.AnswerValidator_TracksStreak" storage="c:\users\george aaron kibbie\documents\aidens projects\in progress\turbo math rally\tests\bin\debug\net9.0-windows\turbomathrally.tests.dll" id="a699277f-fdfe-c76b-d6d8-0a99c3a8c3a4">
+      <Execution id="649a4229-58e0-4f47-babc-b57474ec9118" />
+      <TestMethod codeBase="C:\Users\George Aaron Kibbie\Documents\Aidens Projects\In progress\Turbo Math Rally\tests\bin\Debug\net9.0-windows\TurboMathRally.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TurboMathRally.Tests.Core.AnswerValidatorTests" name="AnswerValidator_TracksStreak" />
+    </UnitTest>
+    <UnitTest name="TurboMathRally.Tests.Core.UserProfileTests.UserProfile_CanModifyPlayerName" storage="c:\users\george aaron kibbie\documents\aidens projects\in progress\turbo math rally\tests\bin\debug\net9.0-windows\turbomathrally.tests.dll" id="9392345b-af7a-d2b8-b0ec-08d8c8d4a1c2">
+      <Execution id="1bec9149-0461-44f8-99d7-b1dc130bb503" />
+      <TestMethod codeBase="C:\Users\George Aaron Kibbie\Documents\Aidens Projects\In progress\Turbo Math Rally\tests\bin\Debug\net9.0-windows\TurboMathRally.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TurboMathRally.Tests.Core.UserProfileTests" name="UserProfile_CanModifyPlayerName" />
+    </UnitTest>
+    <UnitTest name="TurboMathRally.Tests.Core.UserProfileTests.UserProfile_DefaultConstruction_HasValidDefaults" storage="c:\users\george aaron kibbie\documents\aidens projects\in progress\turbo math rally\tests\bin\debug\net9.0-windows\turbomathrally.tests.dll" id="2fb42ad0-cda8-7b58-6738-16ec8d0d840e">
+      <Execution id="e896b4d2-5c48-493c-9315-30bddae19fd3" />
+      <TestMethod codeBase="C:\Users\George Aaron Kibbie\Documents\Aidens Projects\In progress\Turbo Math Rally\tests\bin\Debug\net9.0-windows\TurboMathRally.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TurboMathRally.Tests.Core.UserProfileTests" name="UserProfile_DefaultConstruction_HasValidDefaults" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="243004af-1dd5-a134-d02e-30d22aab4a61" executionId="fe9610b8-f681-47d4-867f-2fda2779683a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b6474e0c-5d6a-44ec-dcd4-246cbf248a91" executionId="0dc7cffe-fb88-420d-b123-bdff7a96b485" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fb42ad0-cda8-7b58-6738-16ec8d0d840e" executionId="e896b4d2-5c48-493c-9315-30bddae19fd3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="866d895f-1714-f753-d0a4-87a44cb0d622" executionId="a7477841-b6c5-435e-aa4b-2466fb353fad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1c57b08a-4c2c-5de7-9b2e-f27029910031" executionId="d5be487a-cde0-4cf7-a001-792b486c9673" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c7767b0b-574c-43c6-b654-e0e8334f696a" executionId="922fd53a-a602-456b-be6d-3583d460c9b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9392345b-af7a-d2b8-b0ec-08d8c8d4a1c2" executionId="1bec9149-0461-44f8-99d7-b1dc130bb503" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a699277f-fdfe-c76b-d6d8-0a99c3a8c3a4" executionId="649a4229-58e0-4f47-babc-b57474ec9118" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="8" executed="8" passed="8" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.6)&#xD;
+[xUnit.net 00:00:01.00]   Discovering: TurboMathRally.Tests&#xD;
+[xUnit.net 00:00:01.03]   Discovered:  TurboMathRally.Tests&#xD;
+[xUnit.net 00:00:01.03]   Starting:    TurboMathRally.Tests&#xD;
+[xUnit.net 00:00:01.90]   Finished:    TurboMathRally.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

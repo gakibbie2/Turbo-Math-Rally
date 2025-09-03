@@ -14,25 +14,25 @@ namespace TurboMathRally
         private readonly ProblemGenerator _problemGenerator;
         private readonly CarBreakdownSystem _carBreakdownSystem;
         private readonly StoryProblemGenerator _storyProblemGenerator;
+        private readonly GameSession _gameSession;  // NEW: Session tracking with achievements
         
         // Game state
         private int _currentQuestionNumber = 1;
         private int _questionsPerStage;
-        private MathProblem _currentProblem;
+        private MathProblem _currentProblem = null!;
         private DateTime _raceStartTime;
-        private bool _gameCompleted = false;
         
-        // UI Controls
-        private Label _headerLabel;
-        private Label _progressLabel;
-        private ProgressBar _progressBar;
-        private Label _statsLabel;
-        private Label _carStatusLabel;
-        private Label _questionLabel;
-        private TextBox _answerTextBox;
-        private Label _instructionLabel;
-        private Label _feedbackLabel;
-        private Button _exitButton;
+        // UI Controls - initialized in InitializeComponent
+        private Label _headerLabel = null!;
+        private Label _progressLabel = null!;
+        private ProgressBar _progressBar = null!;
+        private Label _statsLabel = null!;
+        private Label _carStatusLabel = null!;
+        private Label _questionLabel = null!;
+        private TextBox _answerTextBox = null!;
+        private Label _instructionLabel = null!;
+        private Label _feedbackLabel = null!;
+        private Button _exitButton = null!;
         
         public GameForm(GameConfiguration gameConfig)
         {
@@ -41,6 +41,16 @@ namespace TurboMathRally
             _problemGenerator = new ProblemGenerator();
             _carBreakdownSystem = new CarBreakdownSystem();
             _storyProblemGenerator = new StoryProblemGenerator();
+            
+            // Initialize GameSession with ProfileManager if available
+            if (Program.ProfileManager != null)
+            {
+                _gameSession = new GameSession(Program.ProfileManager);
+            }
+            else
+            {
+                _gameSession = new GameSession();
+            }
             
             // Set questions per stage based on difficulty
             _questionsPerStage = _gameConfig.SelectedDifficulty switch
@@ -260,7 +270,7 @@ namespace TurboMathRally
         }
         
         
-        private void AnswerTextBox_KeyDown(object sender, KeyEventArgs e)
+        private void AnswerTextBox_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -282,8 +292,15 @@ namespace TurboMathRally
             // Disable the text box temporarily
             _answerTextBox.Enabled = false;
             
+            // Record response time
+            DateTime answerStartTime = DateTime.Now;
+            double responseTime = (answerStartTime - _raceStartTime).TotalSeconds / _currentQuestionNumber;
+            
             // Validate the answer
             ValidationResult result = _answerValidator.ValidateAnswer(_currentProblem, userInput);
+            
+            // Record answer in game session for achievements and statistics
+            _gameSession.RecordAnswer(result.IsCorrect && result.IsValid, responseTime);
             
             // Show feedback
             _feedbackLabel.Visible = true;
@@ -318,6 +335,9 @@ namespace TurboMathRally
             // Update stats display
             UpdateUI();
             
+            // Check for achievement unlocks after each answer
+            _gameSession.CheckAchievements(_gameConfig);
+            
             // Auto-advance to next question after a short delay
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Interval = 1500; // 1.5 second delay
@@ -333,7 +353,7 @@ namespace TurboMathRally
             timer.Start();
         }
         
-        private void GameForm_KeyDown(object sender, KeyEventArgs e)
+        private void GameForm_KeyDown(object? sender, KeyEventArgs e)
         {
             // Only allow Enter key to be processed by the answer text box
             if (e.KeyCode == Keys.Enter)
@@ -389,13 +409,43 @@ namespace TurboMathRally
             }
         }
         
-        private void CompleteRace()
+        private async void CompleteRace()
         {
-            _gameCompleted = true;
+            // Record stage completion
+            _gameSession.RecordStageCompletion();
+            
+            // Check for achievement unlocks and display them
+            _gameSession.CheckAchievements(_gameConfig);
             
             // Calculate race time
             DateTime raceEndTime = DateTime.Now;
             int totalRaceTimeSeconds = (int)(raceEndTime - _raceStartTime).TotalSeconds;
+            
+            // Save session to profile
+            try
+            {
+                await _gameSession.SaveSessionAsync(_gameConfig);
+                
+                // Update rally progress
+                if (Program.ProfileManager != null)
+                {
+                    await Program.ProfileManager.UpdateRallyProgressAsync(
+                        _gameConfig.SelectedDifficulty,
+                        true, // stage completed
+                        _answerValidator.AccuracyPercentage,
+                        totalRaceTimeSeconds
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                // Don't crash on save error, but inform user
+                MessageBox.Show($"Race completed but couldn't save progress: {ex.Message}", 
+                    "Save Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            
+            // Display any recent achievements
+            _gameSession.DisplayRecentAchievements();
             
             // Show completion message
             string completionMessage = $"🏆 RACE COMPLETED! 🏆\n\n" +
@@ -404,7 +454,8 @@ namespace TurboMathRally
                 $"Accuracy: {_answerValidator.AccuracyPercentage:F1}%\n" +
                 $"Best Streak: {_answerValidator.BestStreak}\n" +
                 $"Race Time: {totalRaceTimeSeconds / 60}:{totalRaceTimeSeconds % 60:D2}\n" +
-                $"Questions per minute: {(_answerValidator.TotalQuestions / System.Math.Max(1, totalRaceTimeSeconds / 60.0)):F1}";
+                $"Questions per minute: {(_answerValidator.TotalQuestions / System.Math.Max(1, totalRaceTimeSeconds / 60.0)):F1}\n" +
+                $"🏆 Achievement Points: {_gameSession.AchievementManager.TotalPoints}";
             
             MessageBox.Show(completionMessage, "Congratulations!", MessageBoxButtons.OK, MessageBoxIcon.Information);
             

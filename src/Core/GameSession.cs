@@ -1,5 +1,6 @@
 using TurboMathRally.Core.Achievements;
 using TurboMathRally.Math;
+using System.Windows.Forms;
 
 namespace TurboMathRally.Core
 {
@@ -68,6 +69,11 @@ namespace TurboMathRally.Core
         public AchievementManager AchievementManager { get; private set; }
 
         /// <summary>
+        /// Profile manager for persistent data
+        /// </summary>
+        public ProfileManager? ProfileManager { get; private set; }
+
+        /// <summary>
         /// Initialize a new game session
         /// </summary>
         public GameSession()
@@ -83,6 +89,28 @@ namespace TurboMathRally.Core
             
             // Subscribe to achievement unlocks for notifications
             AchievementManager.AchievementUnlocked += OnAchievementUnlocked;
+        }
+
+        /// <summary>
+        /// Initialize a new game session with profile manager
+        /// </summary>
+        public GameSession(ProfileManager profileManager) : this()
+        {
+            ProfileManager = profileManager;
+            AchievementManager = new AchievementManager(profileManager);
+            
+            // Subscribe to achievement unlocks for notifications
+            AchievementManager.AchievementUnlocked += OnAchievementUnlocked;
+        }
+
+        /// <summary>
+        /// Update the profile manager and reload achievements
+        /// </summary>
+        /// <param name="profileManager">The new profile manager to use</param>
+        public void UpdateProfileManager(ProfileManager profileManager)
+        {
+            ProfileManager = profileManager;
+            AchievementManager.UpdateProfileManager(profileManager);
         }
 
         /// <summary>
@@ -147,13 +175,13 @@ namespace TurboMathRally.Core
         }
 
         /// <summary>
-        /// Get statistics object for achievement checking
+        /// Get statistics object for achievement checking (session only)
         /// </summary>
         /// <param name="gameConfig">Current game configuration</param>
-        /// <returns>GameStatistics object</returns>
-        public GameStatistics GetStatistics(GameConfiguration gameConfig)
+        /// <returns>GameStatistics object with session data only</returns>
+        public Achievements.GameStatistics GetSessionStatistics(GameConfiguration gameConfig)
         {
-            return new GameStatistics
+            return new Achievements.GameStatistics
             {
                 AccuracyPercentage = AccuracyPercentage,
                 TotalQuestions = TotalQuestions,
@@ -168,16 +196,59 @@ namespace TurboMathRally.Core
         }
 
         /// <summary>
+        /// Get statistics object for achievement checking
+        /// </summary>
+        /// <param name="gameConfig">Current game configuration</param>
+        /// <returns>GameStatistics object</returns>
+        public Achievements.GameStatistics GetStatistics(GameConfiguration gameConfig)
+        {
+            // For achievement checking, we need to use combined (profile + session) statistics
+            if (ProfileManager?.CurrentProfile?.OverallStats != null)
+            {
+                var profileStats = ProfileManager.CurrentProfile.OverallStats;
+                return new Achievements.GameStatistics
+                {
+                    AccuracyPercentage = AccuracyPercentage, // Use current session accuracy
+                    TotalQuestions = profileStats.TotalQuestions + TotalQuestions,
+                    CorrectAnswers = profileStats.CorrectAnswers + CorrectAnswers,
+                    BestStreak = System.Math.Max(profileStats.BestStreak, BestStreak),
+                    CurrentStreak = CurrentStreak,
+                    AverageResponseTime = _responseTimes.Count > 0 ? AverageResponseTime : profileStats.AverageResponseTime,
+                    StagesCompleted = profileStats.StagesCompleted + StagesCompleted,
+                    ComebacksAchieved = profileStats.ComebacksAchieved + ComebacksAchieved,
+                    TotalPlayTime = profileStats.TotalPlayTime.Add(TotalPlayTime)
+                };
+            }
+            else
+            {
+                // Fallback to session-only statistics if no profile
+                return new Achievements.GameStatistics
+                {
+                    AccuracyPercentage = AccuracyPercentage,
+                    TotalQuestions = TotalQuestions,
+                    CorrectAnswers = CorrectAnswers,
+                    BestStreak = BestStreak,
+                    CurrentStreak = CurrentStreak,
+                    AverageResponseTime = AverageResponseTime,
+                    StagesCompleted = StagesCompleted,
+                    ComebacksAchieved = ComebacksAchieved,
+                    TotalPlayTime = TotalPlayTime
+                };
+            }
+        }
+
+        /// <summary>
         /// Check for achievement unlocks
         /// </summary>
         /// <param name="gameConfig">Current game configuration</param>
-        public void CheckAchievements(GameConfiguration gameConfig = null)
+        public void CheckAchievements(GameConfiguration? gameConfig = null)
         {
             // Use a default config if none provided
             gameConfig ??= new GameConfiguration();
             
-            var stats = GetStatistics(gameConfig);
-            AchievementManager.CheckAchievements(stats, gameConfig);
+            var sessionStats = GetSessionStatistics(gameConfig);
+            var combinedStats = GetStatistics(gameConfig);
+            AchievementManager.CheckSessionAchievements(sessionStats, combinedStats, gameConfig);
         }
 
         /// <summary>
@@ -189,29 +260,76 @@ namespace TurboMathRally.Core
             
             if (recentUnlocks.Count > 0)
             {
-                Console.WriteLine();
-                Console.WriteLine("🏆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-                Console.WriteLine("🎉  ACHIEVEMENT UNLOCKED!");
-                Console.WriteLine("🏆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-                Console.WriteLine();
+                var achievementText = new System.Text.StringBuilder();
+                achievementText.AppendLine("🏆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+                achievementText.AppendLine("🎉  ACHIEVEMENT UNLOCKED!");
+                achievementText.AppendLine("🏆━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+                achievementText.AppendLine();
 
                 foreach (var achievement in recentUnlocks)
                 {
-                    Console.ForegroundColor = achievement.GetRarityColor();
-                    Console.WriteLine($"🎖️  {achievement.Icon} {achievement.Title}");
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.WriteLine($"    {achievement.Description}");
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"    +{achievement.Points} Achievement Points!");
-                    Console.ResetColor();
-                    Console.WriteLine();
+                    achievementText.AppendLine($"🎖️  {achievement.Icon} {achievement.Title}");
+                    achievementText.AppendLine($"    {achievement.Description}");
+                    achievementText.AppendLine($"    +{achievement.Points} Achievement Points!");
+                    achievementText.AppendLine();
                 }
 
-                Console.WriteLine("🏁 Press any key to continue...");
-                Console.ReadKey(true);
+                // Show achievements in a message box
+                MessageBox.Show(achievementText.ToString(), "New Achievements!", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 
                 // Clear the recent unlocks after displaying
                 AchievementManager.ClearRecentUnlocks();
+            }
+        }
+
+        /// <summary>
+        /// Save current session data to profile
+        /// </summary>
+        public async Task SaveSessionAsync(GameConfiguration gameConfig)
+        {
+            if (ProfileManager == null)
+                return;
+
+            var sessionRecord = new SessionRecord
+            {
+                SessionStart = _sessionStart ?? DateTime.Now,
+                Duration = TotalPlayTime,
+                Difficulty = gameConfig.SelectedDifficulty,
+                MathType = gameConfig.SelectedMathType,
+                WasMixedMode = gameConfig.IsMixedMode,
+                QuestionsAnswered = TotalQuestions,
+                CorrectAnswers = CorrectAnswers,
+                BestStreak = BestStreak,
+                AverageResponseTime = AverageResponseTime,
+                StagesCompleted = StagesCompleted,
+                AchievementsUnlocked = AchievementManager.RecentUnlocks.Select(a => a.Id).ToList()
+            };
+
+            try
+            {
+                await ProfileManager.RecordSessionAsync(sessionRecord);
+                
+                // Update overall game statistics with Core.GameStatistics  
+                if (ProfileManager.CurrentProfile != null)
+                {
+                    var coreStats = new GameStatistics
+                    {
+                        TotalQuestions = ProfileManager.CurrentProfile.OverallStats.TotalQuestions + TotalQuestions,
+                        CorrectAnswers = ProfileManager.CurrentProfile.OverallStats.CorrectAnswers + CorrectAnswers,
+                        BestStreak = System.Math.Max(ProfileManager.CurrentProfile.OverallStats.BestStreak, BestStreak),
+                        CurrentStreak = CurrentStreak,
+                        AverageResponseTime = (ProfileManager.CurrentProfile.OverallStats.AverageResponseTime + AverageResponseTime) / 2,
+                        StagesCompleted = ProfileManager.CurrentProfile.OverallStats.StagesCompleted + StagesCompleted,
+                        ComebacksAchieved = ProfileManager.CurrentProfile.OverallStats.ComebacksAchieved + ComebacksAchieved,
+                        TotalPlayTime = ProfileManager.CurrentProfile.OverallStats.TotalPlayTime.Add(TotalPlayTime)
+                    };
+                    await ProfileManager.UpdateGameStatisticsAsync(coreStats);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving session: {ex.Message}");
             }
         }
 

@@ -44,6 +44,11 @@ namespace TurboMathRally.Core.Achievements
             _achievements.Count == 0 ? 0 : (double)UnlockedAchievements.Count / _achievements.Count * 100;
 
         /// <summary>
+        /// Profile manager for persistent data
+        /// </summary>
+        private ProfileManager? _profileManager;
+
+        /// <summary>
         /// Initialize the achievement manager with all available achievements
         /// </summary>
         public AchievementManager()
@@ -55,17 +60,143 @@ namespace TurboMathRally.Core.Achievements
         }
 
         /// <summary>
+        /// Initialize the achievement manager with profile persistence
+        /// </summary>
+        public AchievementManager(ProfileManager profileManager) : this()
+        {
+            _profileManager = profileManager;
+            LoadAchievementProgress();
+        }
+
+        /// <summary>
+        /// Update the profile manager and reload achievement progress
+        /// </summary>
+        /// <param name="profileManager">New profile manager to use</param>
+        public void UpdateProfileManager(ProfileManager profileManager)
+        {
+            _profileManager = profileManager;
+            LoadAchievementProgress();
+        }
+
+        /// <summary>
+        /// Load achievement progress from user profile
+        /// </summary>
+        private void LoadAchievementProgress()
+        {
+            if (_profileManager?.CurrentProfile?.AchievementData == null)
+            {
+                Console.WriteLine("DEBUG: No profile or achievement data to load");
+                // Reset all achievements to unlocked = false when no profile data exists
+                foreach (var achievement in _achievements.Values)
+                {
+                    achievement.IsUnlocked = false;
+                    achievement.CurrentValue = 0;
+                    achievement.Progress = 0.0;
+                    achievement.UnlockedDate = null;
+                }
+                return;
+            }
+
+            var achievementData = _profileManager.CurrentProfile.AchievementData;
+            Console.WriteLine($"DEBUG: Loading achievements, found {achievementData.UnlockedAchievements.Count} unlocked");
+
+            foreach (var achievement in _achievements.Values)
+            {
+                // Reset achievement first, then load from profile data
+                achievement.IsUnlocked = false;
+                achievement.CurrentValue = 0;
+                achievement.Progress = 0.0;
+                achievement.UnlockedDate = null;
+                
+                // Load unlock status from profile
+                if (achievementData.UnlockedAchievements.TryGetValue(achievement.Id, out bool isUnlocked))
+                {
+                    achievement.IsUnlocked = isUnlocked;
+                    if (isUnlocked)
+                    {
+                        achievement.Progress = 1.0;
+                        // Note: We don't have the original unlock date in the profile data, so we'll leave it as null
+                    }
+                    Console.WriteLine($"DEBUG: Set {achievement.Id} to {isUnlocked}");
+                }
+
+                // Load current progress
+                if (achievementData.ProgressValues.TryGetValue(achievement.Id, out int progress))
+                {
+                    achievement.CurrentValue = progress;
+                    if (achievement.TargetValue > 0 && !achievement.IsUnlocked)
+                    {
+                        achievement.Progress = System.Math.Min(1.0, (double)progress / achievement.TargetValue);
+                    }
+                }
+            }
+
+            // Update total points from profile
+            achievementData.TotalPoints = UnlockedAchievements.Sum(a => a.Points);
+            Console.WriteLine($"DEBUG: Total unlocked achievements: {UnlockedAchievements.Count}");
+        }
+
+        /// <summary>
         /// Check for achievement unlocks based on current game statistics
         /// </summary>
         /// <param name="stats">Current game statistics</param>
         /// <param name="gameConfig">Current game configuration</param>
         public void CheckAchievements(GameStatistics stats, GameConfiguration gameConfig)
         {
-            // Check all achievements for potential unlocks
+            // Only check achievements that haven't been unlocked yet
+            // and where the current progress could have triggered the unlock
             foreach (var achievement in _achievements.Values.Where(a => !a.IsUnlocked))
             {
                 CheckIndividualAchievement(achievement, stats, gameConfig);
             }
+        }
+
+        /// <summary>
+        /// Check achievements that could be unlocked by session progress only
+        /// </summary>
+        /// <param name="sessionStats">Current session statistics only</param>  
+        /// <param name="combinedStats">Combined profile + session statistics</param>
+        /// <param name="gameConfig">Current game configuration</param>
+        public void CheckSessionAchievements(GameStatistics sessionStats, GameStatistics combinedStats, GameConfiguration gameConfig)
+        {
+            // Only check achievements that could potentially be triggered by this session
+            foreach (var achievement in _achievements.Values.Where(a => !a.IsUnlocked))
+            {
+                // Check if this achievement could have been triggered by current session progress
+                if (CouldBeTriggeredBySession(achievement, sessionStats))
+                {
+                    CheckIndividualAchievement(achievement, combinedStats, gameConfig);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Determine if an achievement could be triggered by current session progress
+        /// </summary>
+        private bool CouldBeTriggeredBySession(Achievement achievement, GameStatistics sessionStats)
+        {
+            return achievement.Id switch
+            {
+                // Stage completion achievements - always check if stages were completed this session
+                "rookie_graduate" or "junior_champion" or "pro_racer" => sessionStats.StagesCompleted > 0,
+                
+                // Endurance achievements - check if we answered questions this session
+                "getting_started" or "dedicated" or "marathon_runner" or "champion" => sessionStats.TotalQuestions > 0,
+                
+                // Accuracy achievements - check if we have enough questions in session to potentially trigger
+                "first_100" or "accuracy_90" or "accuracy_95" or "perfectionist" => sessionStats.TotalQuestions > 0,
+                
+                // Streak achievements - check if we achieved streaks this session
+                "streak_5" or "streak_10" or "streak_25" or "unstoppable" => sessionStats.BestStreak > 0,
+                
+                // Speed achievements - check if we answered questions this session
+                "speedster" or "lightning_fast" or "flash" => sessionStats.TotalQuestions > 0,
+                
+                // Comeback achievements - check if we had comebacks this session
+                "comeback_kid" or "resilient" => sessionStats.ComebacksAchieved > 0,
+                
+                _ => true // Default to checking unknown achievements
+            };
         }
 
         /// <summary>
@@ -163,6 +294,23 @@ namespace TurboMathRally.Core.Achievements
                 achievement.Unlock();
                 _recentUnlocks.Add(achievement);
                 
+                // Save to profile if available
+                if (_profileManager != null)
+                {
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await _profileManager.UpdateAchievementProgressAsync(achievementId, true, achievement.CurrentValue);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Log error but don't crash the game
+                            Console.WriteLine($"Error saving achievement unlock: {ex.Message}");
+                        }
+                    });
+                }
+                
                 // Fire event for UI notifications
                 AchievementUnlocked?.Invoke(this, achievement);
                 
@@ -170,6 +318,32 @@ namespace TurboMathRally.Core.Achievements
             }
             
             return false;
+        }
+
+        /// <summary>
+        /// Update achievement progress and save to profile
+        /// </summary>
+        /// <param name="achievementId">Achievement ID to update</param>
+        /// <param name="newValue">New progress value</param>
+        public async Task UpdateAchievementProgress(string achievementId, int newValue)
+        {
+            if (_achievements.TryGetValue(achievementId, out var achievement))
+            {
+                achievement.CurrentValue = newValue;
+                
+                // Save to profile if available
+                if (_profileManager != null)
+                {
+                    try
+                    {
+                        await _profileManager.UpdateAchievementProgressAsync(achievementId, achievement.IsUnlocked, newValue);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error saving achievement progress: {ex.Message}");
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -233,7 +407,7 @@ namespace TurboMathRally.Core.Achievements
             }
 
             Console.WriteLine("🏁 Press any key to return to menu...");
-            Console.ReadKey(true);
+            // Console.ReadKey(true); // Commented out for Windows Forms compatibility
         }
 
         /// <summary>

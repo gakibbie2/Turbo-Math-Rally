@@ -1,0 +1,53 @@
+{
+  "playerName": "",
+  "progress": {
+    "levels": {
+      "addition": {
+        "completed": false,
+        "highScore": null,
+        "bestTime": null,
+        "ghostRun": []
+      },
+      "subtraction": {
+        "completed": false,
+        "highScore": null,
+        "bestTime": null,
+        "ghostRun": []
+      },
+      "multiplication": {
+        "completed": false,
+        "highScore": null,
+        "bestTime": null,
+        "ghostRun": []
+      },
+      "division": {
+        "completed": false,
+        "highScore": null,
+        "bestTime": null,
+        "ghostRun": []
+      },
+      "mixup": {
+        "completed": false,
+        "highScore": null,
+        "bestTime": null,
+        "ghostRun": []
+      }
+    }
+  },
+  "achievements": {
+    "completed": [],
+    "inProgress": []
+  },
+  "settings": {
+    "difficulty": "",
+    "soundEnabled": true,
+    "hintsEnabled": false
+  },
+  "stats": {
+    "totalQuestionsAnswered": 0,
+    "totalCorrect": 0,
+    "totalTimePlayed": 0,
+    "gamesPlayed": 0
+  },
+  "lastSave": ""
+}

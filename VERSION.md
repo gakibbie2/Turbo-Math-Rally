@@ -1,6 +1,6 @@
 # Semantic Versioning for Turbo Math Rally
 
-## Current Version: 2.0.0
+## Current Version: 2.1.0
 
 ## Versioning Strategy
 
@@ -14,6 +14,25 @@ We follow [Semantic Versioning 2.0.0](https://semver.org/) principles:
 - **PRE-RELEASE**: Alpha, beta, rc (release candidate) versions
 
 ## Version History
+
+### v2.1.0 (2025-09-03) - 🏆 ACHIEVEMENT LOADING FIX & USER EXPERIENCE
+**MINOR UPDATE - Critical Achievement System Fix + Enhanced User Experience**
+
+#### **Fixed**
+- ✅ **Achievement Loading Bug**: Fixed critical issue where unlocked achievements weren't displaying in UI after profile switches
+- ✅ **Profile Switching**: AchievementManager now properly updates when switching between user profiles
+- ✅ **Achievement State Reset**: All achievements now properly reset when loading different profiles
+
+#### **Added**
+- ✅ **One-Click Launch**: Added `RUN_GAME.bat` for non-technical users to launch game with double-click
+- ✅ **Pure Windows App Experience**: Eliminated terminal windows - launches directly as Windows Forms application
+- ✅ **Enhanced User Instructions**: Updated README with clear instructions for non-technical users
+- ✅ **Release Build**: Added optimized Release configuration for better performance
+
+#### **Technical Details**
+- Added `AchievementManager.UpdateProfileManager()` calls in ProfileManager for all profile switching methods
+- Rewrote `LoadAchievementProgress()` to properly reset achievement states before loading new profile data
+- Updated project documentation for easier distribution and usage
 
 ### v2.0.0 (2025-09-02) - 🖼️ WINDOWS FORMS GUI & SPEED RACING
 **MAJOR INTERFACE OVERHAUL - Professional GUI with Lightning-Fast Text Input**

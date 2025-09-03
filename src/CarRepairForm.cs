@@ -13,21 +13,21 @@ namespace TurboMathRally
         private readonly StoryProblemGenerator _storyProblemGenerator;
         private readonly AnswerValidator _answerValidator;
         
-        private StoryProblem _currentStoryProblem;
+        private StoryProblem _currentStoryProblem = null!;
         private int _repairAttempts = 0;
         private const int MAX_REPAIR_ATTEMPTS = 3;
         
-        // UI Controls
-        private Label _headerLabel;
-        private Label _carStatusLabel;
-        private Label _storyLabel;
-        private Label _contextLabel;
-        private Label _questionLabel;
-        private TextBox _answerTextBox;
-        private Label _instructionLabel;
-        private Label _feedbackLabel;
-        private Button _tryAgainButton;
-        private Button _giveUpButton;
+        // UI Controls - initialized in InitializeComponent
+        private Label _headerLabel = null!;
+        private Label _carStatusLabel = null!;
+        private Label _storyLabel = null!;
+        private Label _contextLabel = null!;
+        private Label _questionLabel = null!;
+        private TextBox _answerTextBox = null!;
+        private Label _instructionLabel = null!;
+        private Label _feedbackLabel = null!;
+        private Button _tryAgainButton = null!;
+        private Button _giveUpButton = null!;
         
         public CarRepairForm(GameConfiguration gameConfig, CarBreakdownSystem carBreakdownSystem, StoryProblemGenerator storyProblemGenerator)
         {

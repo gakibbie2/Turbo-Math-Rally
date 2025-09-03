@@ -11,12 +11,14 @@ namespace TurboMathRally
     public partial class MainMenuForm : Form
     {
         private readonly GameConfiguration _gameConfig;
+        private Label? _playerNameLabel;
         
         public MainMenuForm()
         {
             _gameConfig = new GameConfiguration();
             InitializeComponent();
             SetupRallyTheme();
+            UpdatePlayerInfo();
         }
         
         private void InitializeComponent()
@@ -113,6 +115,18 @@ namespace TurboMathRally
             this.Controls.Add(settingsButton);
             this.Controls.Add(exitButton);
             
+            // Add player info label
+            _playerNameLabel = new Label
+            {
+                Text = "Welcome, Player!",
+                Font = new Font("Arial", 12, FontStyle.Bold),
+                ForeColor = Color.DarkBlue,
+                BackColor = Color.Transparent,
+                AutoSize = true,
+                Location = new Point(20, 20)
+            };
+            this.Controls.Add(_playerNameLabel);
+            
             this.ResumeLayout(false);
         }
         
@@ -146,8 +160,13 @@ namespace TurboMathRally
         
         private void AchievementsButton_Click(object? sender, EventArgs e)
         {
-            // Create a simple achievement manager to display achievements
-            var achievementManager = new TurboMathRally.Core.Achievements.AchievementManager();
+            // Use the global profile manager's achievement manager
+            var achievementManager = Program.ProfileManager?.AchievementManager;
+            if (achievementManager == null)
+            {
+                MessageBox.Show("Profile system not available.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             
             // Create an achievement display form
             var achievementForm = new Form
@@ -234,7 +253,18 @@ namespace TurboMathRally
         
         private void SettingsButton_Click(object? sender, EventArgs e)
         {
-            MessageBox.Show("Settings coming soon!", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var settingsForm = new SettingsForm();
+            this.Hide();
+            
+            var result = settingsForm.ShowDialog();
+            
+            // Update player info in case it changed
+            if (result == DialogResult.OK)
+            {
+                UpdatePlayerInfo();
+            }
+            
+            this.Show();
         }
         
         private void ExitButton_Click(object? sender, EventArgs e)
@@ -243,6 +273,18 @@ namespace TurboMathRally
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 Application.Exit();
+            }
+        }
+        
+        private void UpdatePlayerInfo()
+        {
+            if (_playerNameLabel != null && Program.ProfileManager?.CurrentProfile != null && Program.ProfileManager.AchievementManager != null)
+            {
+                var profile = Program.ProfileManager.CurrentProfile;
+                var achievementCount = Program.ProfileManager.AchievementManager.UnlockedAchievements.Count;
+                var totalAchievements = Program.ProfileManager.AchievementManager.AllAchievements.Count;
+                
+                _playerNameLabel.Text = $"Welcome, {profile.PlayerName}! ({achievementCount}/{totalAchievements} achievements)";
             }
         }
     }

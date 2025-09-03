@@ -8,9 +8,9 @@
     <Nullable>enable</Nullable>
     
     <!-- Semantic Versioning -->
-    <AssemblyVersion>0.1.0</AssemblyVersion>
-    <FileVersion>0.1.0</FileVersion>
-    <Version>0.1.0-alpha</Version>
+    <AssemblyVersion>2.1.0</AssemblyVersion>
+    <FileVersion>2.1.0</FileVersion>
+    <Version>2.1.0</Version>
     
     <!-- Application Information -->
     <AssemblyTitle>Turbo Math Rally</AssemblyTitle>

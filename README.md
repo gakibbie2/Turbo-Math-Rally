@@ -1,12 +1,23 @@
 # Turbo Math Rally 🏎️➕
 
-**Version**: 2.0.0  
-**Status**: ✅ **WINDOWS FORMS GUI COMPLETE - SPEED RACING READY**  
-**Release Date**: September 2, 2025
+**Version**: 2.1.0  
+**Status**: ✅ **ACHIEVEMENT SYSTEM FIXED - READY FOR DISTRIBUTION**  
+**Release Date**: September 3, 2025
 
 🏆 **A professional Windows Forms educational rally racing math game for ages 5-12 with lightning-fast text input interface for speed racing!**
 
-## 🎯 What's New in v2.0.0 - GUI & Speed Racing Update
+## 🎯 What's New in v2.1.0 - Achievement Fix & Enhanced User Experience
+
+### ✅ Critical Fixes
+- **🏆 Achievement Loading Fixed**: Unlocked achievements now properly display in UI after profile switches
+- **🔄 Profile Switching**: Achievement data correctly updates when switching between user profiles
+- **💾 Data Persistence**: Achievement states properly save and load with profile data
+
+### ✅ Enhanced User Experience
+- **🖱️ One-Click Launch**: Added `RUN_GAME.bat` for instant game startup with double-click
+- **🚫 No Terminal Windows**: Pure Windows Forms application - no command prompts or terminals
+- **📖 Clear Instructions**: Updated documentation for non-technical users
+- **⚡ Performance**: Built Release version for optimized game performance
 
 ### ✅ Windows Forms Professional GUI
 - **🖼️ Professional Windows Interface**: Full Windows Forms application with polished visual design
@@ -39,6 +50,28 @@
 - .NET 9.0 SDK
 - Visual Studio 2022 or VS Code (recommended)
 
+## 🎯 **For Non-Technical Users - Easy Download & Play**
+
+If you just want to play the game without any coding knowledge:
+
+### Option 1: Play the Pre-Built Game (Easiest)
+1. **Download the ZIP**: Click the green "Code" button on GitHub → "Download ZIP"
+2. **Extract the Files**: Right-click the downloaded ZIP file → "Extract All"
+3. **Find the Game**: Navigate to the extracted folder: `Turbo Math Rally\src\bin\Release\net9.0-windows\` (or Debug folder)
+4. **Play**: Double-click `TurboMathRally.exe` - **Pure Windows app, no terminal window!**
+
+⚠️ **Important**: You need .NET 9.0 installed on your computer. If the game doesn't start:
+- Download .NET 9.0 from: https://dotnet.microsoft.com/download/dotnet/9.0
+- Install it, then try running `TurboMathRally.exe` again
+
+### Option 2: One-Click Run 
+1. Download and extract the ZIP as above
+2. Double-click `RUN_GAME.bat` in the main folder - **pure Windows app, no terminal!**
+
+---
+
+## 🛠️ For Developers - Installation & Running
+
 ### Installation & Running
 
 **Windows Forms GUI (Recommended):**
@@ -50,20 +83,15 @@ git clone https://github.com/gakibbie2/Turbo-Math-Rally.git
 cd "Turbo Math Rally"
 
 # Run the Windows Forms GUI
-dotnet run --project src/TurboMathRally.WinForms/TurboMathRally.WinForms.csproj
-```
-
-**Console Version (Classic):**
-```bash
-# Run the console version
-dotnet run --project src/TurboMathRally.Console/TurboMathRally.Console.csproj
+dotnet run --project src/TurboMathRally.csproj
 ```
 
 ### First Time Setup
 1. Launch the Windows Forms application
-2. Click on your preferred math operation card (Addition recommended for beginners)
-3. Select your rally series based on age
-4. **Racing Tips for Speed:**
+2. Select or create a player profile
+3. Choose your math operation (Addition recommended for beginners)  
+4. Select your rally series based on age
+5. **Racing Tips for Speed:**
    - Type answers as fast as you can
    - Press Enter to submit (no clicking required!)
    - Questions auto-advance after correct answers

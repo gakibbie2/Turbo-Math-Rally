@@ -37,6 +37,15 @@ namespace TurboMathRally.Core
             _gameSession = new GameSession();  // NEW: Initialize session tracking
             _isRunning = true;
         }
+
+        /// <summary>
+        /// Update the game session with a profile manager
+        /// </summary>
+        /// <param name="profileManager">Profile manager to use for persistence</param>
+        public void SetProfileManager(ProfileManager profileManager)
+        {
+            _gameSession.UpdateProfileManager(profileManager);
+        }
         
         /// <summary>
         /// Start the main game loop
